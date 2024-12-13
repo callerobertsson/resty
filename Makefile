@@ -20,11 +20,9 @@ info:
 
 build:
 	go build ${LDFLAGS} -o ${BINARY}
-	# go build -o ${BINARY}
 
 build-win:
 	GOOS=windows GOARCH=amd64 go build ${LDFLAGS} -o ${BINARY}.exe
-	# GOOS=windows GOARCH=amd64 go build -o ${BINARY}.exe
 
 test:
 	go test -v ./...
