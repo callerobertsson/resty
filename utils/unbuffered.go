@@ -4,11 +4,11 @@ package utils
 import "os/exec"
 
 func SetUnbufferedInput() {
-	exec.Command("stty", "-F", "/dev/tty", "cbreak", "min", "1").Run()
+	_ = exec.Command("stty", "-F", "/dev/tty", "cbreak", "min", "1").Run()
 	// exec.Command("stty", "-F", "/dev/tty", "-echo").Run()
 }
 
-// UnbufferedOff turn on nor
+// UnbufferedOff turn on normal buffering.
 func SetBufferedInput() {
-	exec.Command("reset").Run()
+	_ = exec.Command("reset").Run()
 }

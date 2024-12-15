@@ -2,15 +2,17 @@
 package cli
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"os/user"
 
 	"github.com/callerobertsson/resty/utils"
 )
 
-// Constants
+// DefaultConfigFileName is the default configuration file name.
 const DefaultConfigFileName = ".resty.json"
 
 // Config holds the settings.
@@ -19,21 +21,19 @@ type Config struct {
 	Editor      string // Default $EDITOR
 	ColorMode   bool   // Default false, no color
 
-	// TODO:
+	// TODO: Add config settings
 	// - add formatter per header accept types
 
 	configFile string // Config file path, set by application
 }
 
-// ConfigFromFile create a Config instance created from the file content. Default values
-// will be set for curl command and editor.
-func ConfigFromFile(f string) (*Config, error) {
+// ConfigFromReader constructs a Config from JSON data read from the Reader.
+func ConfigFromJSONReader(r io.Reader) (*Config, error) {
+	c := &Config{}
 
-	c := &Config{configFile: f}
-
-	bs, err := os.ReadFile(f)
+	bs, err := io.ReadAll(r)
 	if err != nil {
-		return c, err
+		return nil, err
 	}
 
 	err = json.Unmarshal(bs, c)
@@ -41,11 +41,31 @@ func ConfigFromFile(f string) (*Config, error) {
 		return c, err
 	}
 
+	c.configFile = "<reader>"
+
 	return c, nil
 }
 
-func ConfigJson(c Config) string {
+// ConfigFromFile uses ConfigFromReader to create a Config from the JSON file content.
+func ConfigFromJSONFile(f string) (*Config, error) {
+	file, err := os.Open(f)
+	if err != nil {
+		return nil, err
+	}
 
+	r := bufio.NewReader(file)
+
+	c, err := ConfigFromJSONReader(r)
+	if err != nil {
+		return nil, err
+	}
+
+	c.configFile = f
+
+	return c, nil
+}
+
+func ConfigJSON(c Config) string {
 	bs, err := json.MarshalIndent(c, "", "  ")
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
@@ -55,8 +75,10 @@ func ConfigJson(c Config) string {
 	return fmt.Sprintf("%v\n", string(bs))
 }
 
+// GetConfigOrDefault returns a Config constructed from the JSON file. If f is
+// the empty string it tries to read the default config file. If that fails an
+// empty Config, with default values, are returned.
 func GetConfigOrDefault(f string) (*Config, error) {
-
 	// Default config
 	config := Config{}
 	config.CurlCommand = "curl"
@@ -79,11 +101,12 @@ func GetConfigOrDefault(f string) (*Config, error) {
 	}
 
 	// Create config from file
-	return ConfigFromFile(f)
+	return ConfigFromJSONFile(f)
 }
 
+// resolveDefaultConfigFilePath returns a path to the default config file in
+// the user home directory.
 func resolveDefaultConfigFilePath() (string, error) {
-
 	u, err := user.Current()
 	if err != nil {
 		return "", err

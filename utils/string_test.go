@@ -1,10 +1,13 @@
 // Package utils string unit tests.
-package utils
+package utils_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/callerobertsson/resty/utils"
+)
 
 func TestContainsString(t *testing.T) {
-
 	cases := []struct {
 		s  string
 		ss []string
@@ -19,11 +22,10 @@ func TestContainsString(t *testing.T) {
 	}
 
 	for i, c := range cases {
-		got := ContainsString(c.ss, c.s)
+		got := utils.ContainsString(c.ss, c.s)
 
 		if c.e != got {
 			t.Errorf("Case %d failed: ContainsString(%v, %q) == %v, expected %v", i, c.ss, c.s, got, c.e)
 		}
 	}
-
 }

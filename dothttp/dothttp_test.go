@@ -1,14 +1,15 @@
-// Package dothttp unit tests for loading .http-file data.
-package dothttp
+// Package dothttp_test unit tests for loading .http-file data.
+package dothttp_test
 
 import (
 	"encoding/json"
 	"strings"
 	"testing"
+
+	"github.com/callerobertsson/resty/dothttp"
 )
 
 func TestLoadValidHTTPLines_OneRequest(t *testing.T) {
-
 	var httpFileContent = `### Fake .http File
 
 @var1=var1value
@@ -18,9 +19,9 @@ GET https://host.com/{{var1}}
 
 `
 
-	expectedDotHTTP := DotHTTP{
-		Requests: []Request{
-			Request{
+	expectedDotHTTP := dothttp.DotHTTP{
+		Requests: []dothttp.Request{
+			dothttp.Request{
 				Name:      "Request 1",
 				Verb:      "GET",
 				URL:       "https://host.com/var1value",
@@ -35,22 +36,21 @@ GET https://host.com/{{var1}}
 	}
 
 	bs, _ := json.MarshalIndent(expectedDotHTTP, "", "  ")
-	expectedJson := string(bs)
+	expectedJSON := string(bs)
 
-	vut := &DotHTTP{}
+	vut := &dothttp.DotHTTP{}
 
-	vut.loadHTTPFileLines(strings.Split(httpFileContent, "\n"))
+	vut.LoadHTTPFileLines(strings.Split(httpFileContent, "\n"))
 
 	bs, _ = json.MarshalIndent(vut, "", "  ")
 	json := string(bs)
 
-	if expectedJson != string(json) {
-		t.Errorf("Expected DotHTTP to be:\n%s\nbut in was:\n%s\n", expectedJson, json)
+	if expectedJSON != json {
+		t.Errorf("Expected DotHTTP to be:\n%s\nbut in was:\n%s\n", expectedJSON, json)
 	}
 }
 
 func TestLoadValidHTTPLines_MultipleRequests(t *testing.T) {
-
 	var httpFileContent = `### Fake .http File
 
 @var1=var1value
@@ -75,9 +75,9 @@ accept: application/json
 
 `
 
-	expectedDotHTTP := DotHTTP{
-		Requests: []Request{
-			Request{
+	expectedDotHTTP := dothttp.DotHTTP{
+		Requests: []dothttp.Request{
+			dothttp.Request{
 				Name:      "Request 1",
 				Verb:      "GET",
 				URL:       "https://host.com/var1value",
@@ -89,7 +89,7 @@ accept: application/json
 				Headers: map[string]string{},
 				Body:    "",
 			},
-			Request{
+			dothttp.Request{
 				Name:      "Request 2",
 				Verb:      "PUT",
 				URL:       "https://host.com/var2value",
@@ -107,16 +107,16 @@ accept: application/json
 	}
 
 	bs, _ := json.MarshalIndent(expectedDotHTTP, "", "  ")
-	expectedJson := string(bs)
+	expectedJSON := string(bs)
 
-	vut := &DotHTTP{}
+	vut := &dothttp.DotHTTP{}
 
-	vut.loadHTTPFileLines(strings.Split(httpFileContent, "\n"))
+	vut.LoadHTTPFileLines(strings.Split(httpFileContent, "\n"))
 
 	bs, _ = json.MarshalIndent(vut, "", "  ")
 	json := string(bs)
 
-	if string(expectedJson) != json {
-		t.Errorf("Expected DotHTTP to be:\n%s\nbut in was:\n%s\n", expectedJson, json)
+	if expectedJSON != json {
+		t.Errorf("Expected DotHTTP to be:\n%s\nbut in was:\n%s\n", expectedJSON, json)
 	}
 }

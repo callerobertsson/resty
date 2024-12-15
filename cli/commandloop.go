@@ -8,104 +8,127 @@ import (
 )
 
 func (cli *CLI) commandLoop() error {
-
 	// Unbuffered input
 	utils.SetUnbufferedInput()
 
+	// Single byte buffer for keypresses
 	buf := make([]byte, 1)
 
+	// Command loop
 	for {
-		clear()
-		conf := ", conf: none"
-		if cli.config.configFile != "" {
-			conf = ", conf: " + cli.config.configFile
-		}
-		fmt.Printf("RESTY\nfile: %s%s\n\n", cli.httpFile, conf)
+		renderClear()
 
+		cli.renderHeader()
 		cli.renderUI()
-		fmt.Printf("\n[revcq?] > ")
+		cli.renderPrompt()
 
 		// Read input rune
-		os.Stdin.Read(buf)
+		_, _ = os.Stdin.Read(buf)
 		r := rune(buf[0])
 
 		switch {
 		case r == 'q':
-			// Quit
-			fmt.Println("\nbye!")
-			utils.SetBufferedInput()
-			os.Exit(0)
-
-		case r == 'j' || r == 66:
-			// Go down
-			cli.current++
-			if cli.current >= len(cli.dotHTTP.Requests) {
-				cli.current--
-			}
-
-		case r == 'k' || r == 65:
-			// Go up
-			cli.current--
-			if cli.current < 0 {
-				cli.current = 0
-			}
-
+			handleQuit()
 		case r == 'g':
-			// Go to top
-			cli.current = 0
-
+			cli.handleFirst()
+		case r == 'k' || r == 65:
+			cli.handleUp()
+		case r == 'j' || r == 66:
+			cli.handleDown()
 		case r == 'G':
-			// Go to bottom
-			cli.current = len(cli.dotHTTP.Requests) - 1
-
+			cli.handleLast()
 		case r == 'e':
-			// Edit .http-file (until no errors)
-			for {
-				clear()
-				_, err := utils.EditFile(cli.httpFile, cli.config.Editor)
-				if err != nil {
-					stopMessage("Error editing %v: %v\n", cli.httpFile, err)
-				}
-
-				// Reload .http-file
-				err = cli.dotHTTP.LoadHTTPFile(cli.httpFile)
-				if err != nil {
-					stopMessage("Error loading %v: %v\n", cli.httpFile, err)
-					continue
-				}
-
-				cli.current = 0 // if something is deleted
-
-				break
-			}
-
+			cli.handleEdit()
 		case r == 'c':
-			// Config - show config file
-			clear()
-			fmt.Printf("Config in %s:\n%s", cli.config.configFile, ConfigJson(*cli.config))
-			stopMessage("\n")
-
+			cli.handleConfig()
 		case r == 'v':
-			// Variables - show variables active for current request
-			clear()
-			cli.renderVariables()
-			stopMessage("\n")
-
+			cli.handleVariables()
 		case r == 'r' || r == '\n':
-			// Run current request
-			clear()
-			// cli.renderRequestInfo()
-			err := cli.runCurrentRequest()
-			if err != nil {
-				stopMessage("Error: %v\n", err)
-			}
-
+			cli.handleRun()
 		case r == '?':
-			// Show help
-			clear()
-			stopMessage("%v\n", keyHelpText)
+			handleHelp()
 		}
 	}
+}
+
+func handleQuit() {
+	fmt.Println("\nbye!")
+	utils.SetBufferedInput()
+	os.Exit(0)
+}
+
+func (cli *CLI) handleFirst() {
+	cli.current = 0
+}
+
+func (cli *CLI) handleUp() {
+	cli.current--
+	if cli.current < 0 {
+		cli.current = 0
+	}
+}
+
+func (cli *CLI) handleDown() {
+	cli.current++
+	if cli.current >= len(cli.dotHTTP.Requests) {
+		cli.current--
+	}
+}
+
+func (cli *CLI) handleLast() {
+	cli.current = len(cli.dotHTTP.Requests) - 1
+}
+
+func (cli *CLI) handleEdit() {
+	// Edit .http-file (until no errors)
+	for {
+		renderClear()
+		_, err := utils.EditFile(cli.httpFile, cli.config.Editor)
+		if err != nil {
+			stopMessage("Error editing %v: %v\n", cli.httpFile, err)
+		}
+
+		// Reload .http-file
+		err = cli.dotHTTP.LoadHTTPFile(cli.httpFile)
+		if err != nil {
+			stopMessage("Error loading %v: %v\n", cli.httpFile, err)
+			continue
+		}
+
+		cli.current = 0 // if something is deleted
+
+		break
+	}
+}
+
+func (cli *CLI) handleConfig() {
+	// Config - show config file
+	renderClear()
+	cli.renderConfig()
+	stopMessage("\n")
+}
+
+func (cli *CLI) handleVariables() {
+	// Variables - show variables active for current request
+	renderClear()
+	cli.renderVariables()
+	stopMessage("\n")
+}
+
+func (cli *CLI) handleRun() {
+	// Run current request
+	renderClear()
+	// cli.renderRequestInfo()
+	err := cli.runCurrentRequest()
+	if err != nil {
+		stopMessage("Error: %v\n", err)
+	}
+}
+
+func handleHelp() {
+	// Show help
+	renderClear()
+	stopMessage("%v\n", keyHelpText)
 }
 
 var keyHelpText = `=== RESTY Keymap ===

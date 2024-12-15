@@ -15,8 +15,8 @@ type DotHTTP struct {
 	Requests []Request
 }
 
-// Supported Verbs
-// (all: OPTIONS GET HEAD POST PUT PATCH DELETE TRACE CONNECT)
+// Supported Verbs.
+// All possible: OPTIONS GET HEAD POST PUT PATCH DELETE TRACE CONNECT.
 var Verbs = []string{"GET", "PUT", "POST", "DELETE"}
 
 func New() *DotHTTP {
@@ -30,7 +30,6 @@ func NewFromFile(f string) (*DotHTTP, error) {
 }
 
 func (dotHTTP *DotHTTP) LoadHTTPFile(f string) error {
-
 	// Read file line by line
 	file, err := os.Open(f)
 	if err != nil {
@@ -46,11 +45,10 @@ func (dotHTTP *DotHTTP) LoadHTTPFile(f string) error {
 		lines = append(lines, scanner.Text())
 	}
 
-	return dotHTTP.loadHTTPFileLines(lines)
+	return dotHTTP.LoadHTTPFileLines(lines)
 }
 
-func (dotHTTP *DotHTTP) loadHTTPFileLines(lines []string) error {
-
+func (dotHTTP *DotHTTP) LoadHTTPFileLines(lines []string) error {
 	rs := []Request{}
 	vars := map[string]string{}
 
@@ -68,7 +66,7 @@ func (dotHTTP *DotHTTP) loadHTTPFileLines(lines []string) error {
 			// Variable - add to vars
 			parts := strings.Split(line, "=")
 			if len(parts) != 2 {
-				return fmt.Errorf("variable definition on line %d is invalid\n", i+1)
+				return fmt.Errorf("variable definition on line %d is invalid", i+1)
 			}
 
 			vars[strings.TrimSpace(parts[0])] = strings.TrimSpace(parts[1])
@@ -82,9 +80,9 @@ func (dotHTTP *DotHTTP) loadHTTPFileLines(lines []string) error {
 
 			parts := strings.Split(line, " ")
 			if len(parts) < 2 {
-				return fmt.Errorf("request on line %d has no url\n", i+1)
+				// TODO: Handle HTTP version as part 3
+				return fmt.Errorf("request on line %d has no url", i+1)
 			}
-			// TODO: Handle HTTP version as part 3
 
 			currRequest.Verb = strings.TrimSpace(parts[0])
 			currRequest.URLFormat = strings.TrimSpace(parts[1])
@@ -112,19 +110,15 @@ func (dotHTTP *DotHTTP) loadHTTPFileLines(lines []string) error {
 
 			// Read body data after the empty line (if any) but
 			// only if next line isn't a comment or variable
-			if strings.TrimSpace(lines[i]) == "" &&
-				!strings.HasPrefix(lines[i+1], "#") &&
-				!strings.HasPrefix(lines[i+1], "@") {
-
-				newI, body := readBody(i+1, lines)
-				i = newI + 1 // for-loop i++ adjustment
+			if strings.TrimSpace(lines[i]) == "" && !strings.HasPrefix(lines[i+1], "#") && !strings.HasPrefix(lines[i+1], "@") {
+				newNewI, body := readBody(i+1, lines)
+				i = newNewI + 1 // for-loop i++ adjustment
 
 				currRequest.Body = strings.TrimSpace(body)
 			}
 
 			rs = append(rs, currRequest) // store previous request
 		}
-
 	}
 
 	dotHTTP.Requests = rs
@@ -172,7 +166,7 @@ func parseURL(urlFormat string, vars map[string]string) string {
 
 	for k, v := range vars {
 		k = strings.TrimLeft(k, "@")
-		url = strings.Replace(url, "{{"+k+"}}", v, -1)
+		url = strings.ReplaceAll(url, "{{"+k+"}}", v)
 	}
 
 	return url
@@ -207,14 +201,4 @@ func hasVerbPrefix(s string) bool {
 
 func hasHeaderValue(s string) bool {
 	return len(strings.Split(s, ":")) == 2
-}
-
-func getHeaderValue(s string) (string, string, error) {
-	if !hasHeaderValue(s) {
-		return "", "", fmt.Errorf("invalid header %q", s)
-	}
-
-	parts := strings.Split(s, ":")
-
-	return strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]), nil
 }

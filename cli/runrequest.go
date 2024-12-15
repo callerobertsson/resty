@@ -8,14 +8,16 @@ import (
 )
 
 func (cli *CLI) runCurrentRequest() error {
-
 	args := cli.dotHTTP.Requests[cli.current].BuildCurlArgs()
 
-	fmt.Printf("=== CURL ======================================================================\n")
+	fmt.Printf(TITLE + "=== CURL ======================================================================\n" + NORM)
 	fmt.Printf("%s %s\n", cli.config.CurlCommand, strings.Join(args, " "))
-	fmt.Printf("=== Response ==================================================================\n")
+	fmt.Printf(TITLE + "=== Response ==================================================================\n" + NORM)
 
-	runProcess(cli.config.CurlCommand, args...)
+	err := runProcess(cli.config.CurlCommand, args...)
+	if err != nil {
+		return err
+	}
 
 	stopMessage("\n")
 
@@ -23,7 +25,6 @@ func (cli *CLI) runCurrentRequest() error {
 }
 
 func runProcess(cmd string, args ...string) error {
-
 	c, err := exec.LookPath(cmd)
 	if err != nil {
 		return err
@@ -38,7 +39,7 @@ func runProcess(cmd string, args ...string) error {
 	if err != nil {
 		return err
 	}
-	p.Wait()
+	_, _ = p.Wait()
 
 	return nil
 }

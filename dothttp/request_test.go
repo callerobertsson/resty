@@ -1,14 +1,15 @@
-// Package dothttp Request unit tests.
-package dothttp
+// Package dothttp_test Request unit tests.
+package dothttp_test
 
 import (
 	"strings"
 	"testing"
+
+	"github.com/callerobertsson/resty/dothttp"
 )
 
 func TestBuildCurlArgs(t *testing.T) {
-
-	vut := Request{
+	vut := dothttp.Request{
 		Name:      "Fake Request",
 		Verb:      "VERB",
 		URL:       "https://base.url/path",

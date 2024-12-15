@@ -23,7 +23,7 @@ func EditFile(filePath, editor string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	p.Wait()
+	_, _ = p.Wait()
 
 	// Read file content
 	text, err := os.ReadFile(filePath)

@@ -7,16 +7,37 @@ import (
 	"strings"
 )
 
+// Terminal color constants.
+const (
+	NORM     = "\033[0m"
+	TITLE    = "\033[1;33m" // title - yellow bold
+	SUBTITLE = "\033[37m"   // greyish
+	SELECTED = "\033[1;32m" // selected - dark green
+	NOTICE   = "\033[1;31m" // red, bold
+)
+
+func (cli *CLI) renderHeader() {
+	conf := ", conf: none"
+	if cli.config.configFile != "" {
+		conf = " - " + cli.config.configFile
+	}
+	// fmt.Printf(TITLE+"RESTY\n"+SUBTITLE+"file: %s%s\n\n"+NORM, cli.httpFile, conf)
+	fmt.Printf(TITLE+"RESTY "+SUBTITLE+"%s%s\n\n"+NORM, cli.httpFile, conf)
+}
+
+func (cli *CLI) renderPrompt() {
+	fmt.Printf(SUBTITLE + "\n[revcq?] > " + NORM)
+}
+
 func (cli *CLI) renderUI() {
 	for i, r := range cli.dotHTTP.Requests {
-		indicator := " "
+		indicator := NORM + " "
 		if i == cli.current {
-			indicator = ">"
+			indicator = NOTICE + ">" + SELECTED
 		}
 
-		name := r.Name
-		if name == "" {
-			name = r.URL
+		if r.Name == "" {
+			r.Name = r.URL
 		}
 
 		fmt.Printf(" %s %2d: %-6s %s\n", indicator, i+1, r.Verb, r.Name)
@@ -36,33 +57,18 @@ func (cli *CLI) renderUI() {
 	}
 }
 
-func (cli *CLI) renderRequestInfo() {
-	r := cli.dotHTTP.Requests[cli.current]
-
-	fmt.Printf("\n%s %s\n", r.Verb, r.URL)
-	cli.renderVariables()
-	cli.renderHeaders()
-	fmt.Printf("\nBody:\n%s\n", r.Body)
-	fmt.Printf("------------------------------------------\n")
-
-}
-
 func (cli *CLI) renderVariables() {
 	if len(cli.dotHTTP.Requests[cli.current].Variables) > 0 {
-		fmt.Printf("Variables:\n")
+		fmt.Printf(TITLE + "Variables:\n" + NORM)
 		renderStringMap(cli.dotHTTP.Requests[cli.current].Variables, "  ")
 	} else {
 		fmt.Printf("No variables\n")
 	}
 }
 
-func (cli *CLI) renderHeaders() {
-	if len(cli.dotHTTP.Requests[cli.current].Headers) > 0 {
-		fmt.Printf("Headers:\n")
-		renderStringMap(cli.dotHTTP.Requests[cli.current].Headers, "  ")
-	} else {
-		fmt.Printf("No headers\n")
-	}
+func (cli *CLI) renderConfig() {
+	fmt.Printf(TITLE+"Config in %s:\n"+NORM, cli.config.configFile)
+	fmt.Printf("%s", ConfigJSON(*cli.config))
 }
 
 func renderStringMap(vars map[string]string, indent string) {
@@ -71,14 +77,14 @@ func renderStringMap(vars map[string]string, indent string) {
 	}
 }
 
-func clear() {
+func renderClear() {
 	cmd := exec.Command("clear")
 	cmd.Stdout = os.Stdout
-	cmd.Run()
+	_ = cmd.Run()
 }
 
 func stopMessage(f string, a ...any) {
 	fmt.Printf(f, a...)
-	fmt.Printf("-- press any key to continue --\n")
-	os.Stdin.Read(make([]byte, 1))
+	fmt.Printf(SELECTED + "-- press any key to continue --\n" + NORM)
+	_, _ = os.Stdin.Read(make([]byte, 1))
 }

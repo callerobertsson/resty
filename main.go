@@ -10,21 +10,39 @@ import (
 )
 
 var (
-	// Version is the application version
+	// Version is the application version.
 	Version string
-	// Build contains the build date
+	// Build contains the build date.
 	Build string
 
-	// Command line flags parsed in init()
+	// Command line flags parsed in parseCommandLine().
 	configFile     = ""
 	httpFile       = ""
 	showVersion    = false
 	generateConfig = false
 )
 
-// init handles command line flags parsing
-func init() {
+// main loads config and starts the CLI.
+func main() {
+	parseCommandLine()
 
+	// Get configuration
+	config, err := cli.GetConfigOrDefault(configFile)
+	if err != nil {
+		fmt.Printf("Error creating configuration: %s\n", err)
+		os.Exit(1)
+	}
+
+	// Create CLI
+	cli := cli.New(httpFile, config)
+
+	if err = cli.Start(); err != nil {
+		fmt.Printf("Error running Resty: %v\n", err)
+	}
+}
+
+// parseCommandLine handles command line flags parsing.
+func parseCommandLine() {
 	flag.StringVar(&configFile, "c", "", "config file")
 	flag.BoolVar(&showVersion, "v", false, "version information")
 	flag.BoolVar(&generateConfig, "g", false, "print default config file")
@@ -37,7 +55,7 @@ func init() {
 	}
 
 	if generateConfig {
-		fmt.Printf("%v\n", cli.ConfigJson(cli.Config{}))
+		fmt.Printf("%v\n", cli.ConfigJSON(cli.Config{}))
 		os.Exit(1)
 	}
 
@@ -48,23 +66,5 @@ func init() {
 	if httpFile == "" {
 		fmt.Printf("Need a .httpFile as argument\n")
 		os.Exit(1)
-	}
-}
-
-// main loads config and starts the CLI.
-func main() {
-
-	// Get configuration
-	config, err := cli.GetConfigOrDefault(configFile)
-	if err != nil {
-		fmt.Printf("Error creating configuration: %s\n", err)
-		os.Exit(1)
-	}
-
-	// Create CLI
-	cli := cli.New(httpFile, config)
-
-	if err := cli.Start(); err != nil {
-		fmt.Printf("Error running Resty: %v\n", err)
 	}
 }

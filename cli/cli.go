@@ -16,7 +16,6 @@ func New(f string, c *Config) *CLI {
 }
 
 func (cli *CLI) Start() error {
-
 	maybeDH, err := dothttp.NewFromFile(cli.httpFile)
 	if err != nil {
 		return err

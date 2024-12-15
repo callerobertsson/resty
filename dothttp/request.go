@@ -11,7 +11,8 @@ type Request struct {
 }
 
 func (r Request) BuildCurlArgs() []string {
-	args := []string{} // TODO: Silent? - args := []string{"-s"} // silent
+	// TODO: Silent? - args := []string{"-s"} // silent
+	args := []string{}
 
 	// TODO: add curl config args
 
