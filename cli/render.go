@@ -72,7 +72,6 @@ func renderStringMap(vars map[string]string, indent string) {
 }
 
 func clear() {
-	fmt.Println("-----------------------------------------------------------------------------")
 	cmd := exec.Command("clear")
 	cmd.Stdout = os.Stdout
 	cmd.Run()

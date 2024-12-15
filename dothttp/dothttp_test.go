@@ -1,3 +1,4 @@
+// Package dothttp unit tests for loading .http-file data.
 package dothttp
 
 import (

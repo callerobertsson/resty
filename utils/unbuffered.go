@@ -1,3 +1,4 @@
+// Package utils function for turning on and off buffered input.
 package utils
 
 import "os/exec"

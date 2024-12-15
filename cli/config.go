@@ -11,15 +11,30 @@ type Config struct {
 	CurlCommand string // Default "curl"
 	Editor      string // Default $EDITOR
 	ColorMode   bool   // Default false, no color
+
+	// TODO:
+	// - add formatter per header accept types
+
+	configFile string // Config file path, set by application
 }
 
 // ConfigFromFile create a Config instance created from the file content. Default values
 // will be set for curl command and editor.
 func ConfigFromFile(f string) (*Config, error) {
-	// TODO: Read config file
-	c := Config{}
 
-	return &c, nil
+	c := &Config{configFile: f}
+
+	bs, err := os.ReadFile(f)
+	if err != nil {
+		return c, err
+	}
+
+	err = json.Unmarshal(bs, c)
+	if err != nil {
+		return c, err
+	}
+
+	return c, nil
 }
 
 func ConfigJson(c Config) string {

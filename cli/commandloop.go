@@ -16,7 +16,11 @@ func (cli *CLI) commandLoop() error {
 
 	for {
 		clear()
-		fmt.Printf("RESTY %s\n\n", cli.httpFile)
+		conf := ", conf: none"
+		if cli.config.configFile != "" {
+			conf = ", conf: " + cli.config.configFile
+		}
+		fmt.Printf("RESTY\nfile: %s%s\n\n", cli.httpFile, conf)
 
 		cli.renderUI()
 		fmt.Printf("\n[revcq?] > ")
