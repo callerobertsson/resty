@@ -2,11 +2,9 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"os"
-	"os/user"
 
 	"github.com/callerobertsson/resty/cli"
 )
@@ -22,9 +20,6 @@ var (
 	httpFile       = ""
 	showVersion    = false
 	generateConfig = false
-
-	// Constants
-	defaultConfigFileName = ".resty.json"
 )
 
 // init handles command line flags parsing
@@ -60,7 +55,7 @@ func init() {
 func main() {
 
 	// Get configuration
-	config, err := getConfigOrDefault(configFile)
+	config, err := cli.GetConfigOrDefault(configFile)
 	if err != nil {
 		fmt.Printf("Error creating configuration: %s\n", err)
 		os.Exit(1)
@@ -72,46 +67,4 @@ func main() {
 	if err := cli.Start(); err != nil {
 		fmt.Printf("Error running Resty: %v\n", err)
 	}
-}
-
-func getConfigOrDefault(f string) (*cli.Config, error) {
-
-	// Default config
-	config := cli.Config{}
-	config.CurlCommand = "curl"
-	config.Editor = os.Getenv("EDITOR")
-
-	// If no config file
-	if f == "" {
-		df, err := resolveDefaultConfigFilePath()
-		if err != nil {
-			return &config, nil // ignore error
-		}
-
-		// Return default config, if no config file exists
-		if !fileExists(f) {
-			return &config, nil
-		}
-
-		// Use default config file
-		f = df
-	}
-
-	// Let cli create config from file
-	return cli.ConfigFromFile(f)
-}
-
-func resolveDefaultConfigFilePath() (string, error) {
-
-	u, err := user.Current()
-	if err != nil {
-		return "", err
-	}
-
-	return fmt.Sprintf("%v%c%v", u.HomeDir, os.PathSeparator, defaultConfigFileName), nil
-}
-
-func fileExists(f string) bool {
-	_, err := os.Stat(f)
-	return !errors.Is(err, os.ErrNotExist)
 }

@@ -82,7 +82,7 @@ func (cli *CLI) commandLoop() error {
 		case r == 'c':
 			// Config - show config file
 			clear()
-			fmt.Printf("Config:\n%s", ConfigJson(*cli.config))
+			fmt.Printf("Config in %s:\n%s", cli.config.configFile, ConfigJson(*cli.config))
 			stopMessage("\n")
 
 		case r == 'v':

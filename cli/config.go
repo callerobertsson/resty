@@ -5,8 +5,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/user"
+
+	"github.com/callerobertsson/resty/utils"
 )
 
+// Constants
+const DefaultConfigFileName = ".resty.json"
+
+// Config holds the settings.
 type Config struct {
 	CurlCommand string // Default "curl"
 	Editor      string // Default $EDITOR
@@ -46,4 +53,41 @@ func ConfigJson(c Config) string {
 	}
 
 	return fmt.Sprintf("%v\n", string(bs))
+}
+
+func GetConfigOrDefault(f string) (*Config, error) {
+
+	// Default config
+	config := Config{}
+	config.CurlCommand = "curl"
+	config.Editor = os.Getenv("EDITOR")
+
+	// If no config file
+	if f == "" {
+		df, err := resolveDefaultConfigFilePath()
+		if err != nil {
+			return &config, nil // ignore error
+		}
+
+		// Return default config, if no config file exists
+		if !utils.FileExists(f) {
+			return &config, nil
+		}
+
+		// Use default config file
+		f = df
+	}
+
+	// Create config from file
+	return ConfigFromFile(f)
+}
+
+func resolveDefaultConfigFilePath() (string, error) {
+
+	u, err := user.Current()
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%v%c%v", u.HomeDir, os.PathSeparator, DefaultConfigFileName), nil
 }
