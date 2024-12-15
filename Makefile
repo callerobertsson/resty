@@ -3,9 +3,9 @@
 # Use `git tag` to tag version
 #
 
-# TODO: Add version and build info
-
 BINARY=resty
+
+HTTPTESTFILE=_dev/jsonplaceholder.http
 
 VERSION=`git describe --tags`
 BUILD=`date +%FT%T%z`
@@ -16,6 +16,7 @@ info:
 	@echo "  build     - build for current OS"
 	@echo "  build-win - build for Windows AMD64"
 	@echo "  test      - run tests"
+	@echo "  run       - run with test file"
 	@echo "  clean     - remove build artifacts"
 
 build:
@@ -28,7 +29,7 @@ test:
 	go test -v ./...
 
 run: clean build
-	./resty _dev/test.http
+	./resty ${HTTPTESTFILE}
 
 clean:
 	@if [ -f ${BINARY} ] ; then rm ${BINARY}; fi
