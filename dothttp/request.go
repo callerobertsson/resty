@@ -15,11 +15,11 @@ func (r Request) BuildCurlArgs() []string {
 
 	// TODO: add curl config args
 
-	// Verb (-X) and URL
-	args = append(args, []string{"-X", r.Verb, r.URL}...)
-
 	// Insecure
 	args = append(args, "-k") // Insecure
+
+	// Verb (-X) and URL
+	args = append(args, []string{"-X", r.Verb, r.URL}...)
 
 	// Headers (-H)
 	for k, v := range r.Headers {
