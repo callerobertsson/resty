@@ -81,9 +81,10 @@ func ConfigJSON(c Config) string {
 // empty Config, with default values, are returned.
 func GetConfigOrDefault(f string) (*Config, error) {
 	// Default config
-	config := Config{}
-	config.CurlCommand = "curl"
-	config.Editor = os.Getenv("EDITOR")
+	config := Config{
+		CurlCommand: "curl",
+		Editor:      os.Getenv("EDITOR"),
+	}
 
 	// If no config file
 	if f == "" {
