@@ -10,6 +10,7 @@ import (
 func (cli *CLI) commandLoop() error {
 	// Unbuffered input
 	utils.SetUnbufferedInput()
+	defer utils.SetBufferedInput()
 
 	// Single byte buffer for keypresses
 	buf := make([]byte, 1)

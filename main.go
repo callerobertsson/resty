@@ -47,6 +47,8 @@ func parseCommandLine() {
 	flag.BoolVar(&showVersion, "v", false, "version information")
 	flag.BoolVar(&generateConfig, "g", false, "print default config file")
 
+	flag.Usage = usage
+
 	flag.Parse()
 
 	if showVersion {
@@ -64,7 +66,32 @@ func parseCommandLine() {
 	}
 
 	if httpFile == "" {
-		fmt.Printf("Need a .httpFile as argument\n")
+		fmt.Printf("Error: Need a .httpFile as argument\n")
+		fmt.Printf("Use -h for help\n")
 		os.Exit(1)
 	}
+}
+
+func usage() {
+	// fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s:\n", os.Args[0])
+	out := flag.CommandLine.Output()
+
+	fmt.Fprintf(out, `RESTY
+    SYNOPSIS
+          resty [flags] <.http-file>
+
+    DESCRIPTON
+          Resty opens the <.http-file> and displays list of the requests.
+          The list can be navigated using vim-like bindings or arrow keys.
+
+          Requests can be run and the .http-file edited.
+
+          For more info press '?' to show the available commands.
+
+    OPTIONS
+`)
+
+	flag.VisitAll(func(f *flag.Flag) {
+		fmt.Fprintf(out, "%8s-%-4s%s (default: %q)\n", "", f.Name, f.Usage, f.DefValue)
+	})
 }

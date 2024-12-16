@@ -58,7 +58,7 @@ func TestLoadValidHTTPLines_MultipleRequests(t *testing.T) {
 ### @name Request 1
 GET https://host.com/{{var1}}
 
-@var2=var2value
+@var2=var2valueand{{var1}}
 
 ### @name Request 2
 PUT https://host.com/{{var2}}
@@ -92,11 +92,11 @@ accept: application/json
 			dothttp.Request{
 				Name:      "Request 2",
 				Verb:      "PUT",
-				URL:       "https://host.com/var2value",
+				URL:       "https://host.com/var2valueandvar1value",
 				URLFormat: "https://host.com/{{var2}}",
 				Variables: map[string]string{
 					"@var1": "var1value",
-					"@var2": "var2value",
+					"@var2": "var2valueandvar1value",
 				},
 				Headers: map[string]string{
 					"accept": "application/json",

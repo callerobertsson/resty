@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"runtime"
 	"strings"
 )
 
@@ -21,7 +22,6 @@ func (cli *CLI) renderHeader() {
 	if cli.config.configFile != "" {
 		conf = " - " + cli.config.configFile
 	}
-	// fmt.Printf(TITLE+"RESTY\n"+SUBTITLE+"file: %s%s\n\n"+NORM, cli.httpFile, conf)
 	fmt.Printf(TITLE+"RESTY "+SUBTITLE+"%s%s\n\n"+NORM, cli.httpFile, conf)
 }
 
@@ -78,9 +78,25 @@ func renderStringMap(vars map[string]string, indent string) {
 }
 
 func renderClear() {
+	if runtime.GOOS == "windows" {
+		cmd := exec.Command("cmd", "/c", "cls")
+		cmd.Stdout = os.Stdout
+		_ = cmd.Run()
+		return
+	}
+
 	cmd := exec.Command("clear")
 	cmd.Stdout = os.Stdout
 	_ = cmd.Run()
+}
+
+func confirmMessage(f string, a ...any) bool {
+	fmt.Printf(f, a...)
+	fmt.Printf(SELECTED + "-- press 'y' to continue --\n" + NORM)
+	bs := make([]byte, 1)
+	_, _ = os.Stdin.Read(bs)
+
+	return len(bs) > 0 && strings.ToLower(string(bs[0])) == "y"
 }
 
 func stopMessage(f string, a ...any) {

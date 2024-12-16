@@ -19,6 +19,8 @@ info:
 	@echo "  run       - run with test file"
 	@echo "  clean     - remove build artifacts"
 
+all: build build-win
+
 build:
 	go build ${LDFLAGS} -o ${BINARY}
 

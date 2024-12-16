@@ -8,10 +8,16 @@ import (
 )
 
 func (cli *CLI) runCurrentRequest() error {
-	args := cli.dotHTTP.Requests[cli.current].BuildCurlArgs()
+	r := cli.dotHTTP.Requests[cli.current]
+	args := r.BuildCurlArgs()
 
 	fmt.Printf(TITLE + "=== CURL ======================================================================\n" + NORM)
 	fmt.Printf("%s %s\n", cli.config.CurlCommand, strings.Join(args, " "))
+
+	if r.Verb != "GET" && !confirmMessage("Are you sure?\n") {
+		return nil
+	}
+
 	fmt.Printf(TITLE + "=== Response ==================================================================\n" + NORM)
 
 	err := runProcess(cli.config.CurlCommand, args...)

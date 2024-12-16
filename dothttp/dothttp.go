@@ -45,6 +45,9 @@ func (dotHTTP *DotHTTP) LoadHTTPFile(f string) error {
 		lines = append(lines, scanner.Text())
 	}
 
+	// Add extra comment to avoid extra checking
+	lines = append(lines, "# EOF")
+
 	return dotHTTP.LoadHTTPFileLines(lines)
 }
 
@@ -69,7 +72,7 @@ func (dotHTTP *DotHTTP) LoadHTTPFileLines(lines []string) error {
 				return fmt.Errorf("variable definition on line %d is invalid", i+1)
 			}
 
-			vars[strings.TrimSpace(parts[0])] = strings.TrimSpace(parts[1])
+			vars[strings.TrimSpace(parts[0])] = replaceVars(strings.TrimSpace(parts[1]), vars)
 
 		case hasVerbPrefix(line):
 			// Verb - check if current request already created
@@ -86,7 +89,7 @@ func (dotHTTP *DotHTTP) LoadHTTPFileLines(lines []string) error {
 
 			currRequest.Verb = strings.TrimSpace(parts[0])
 			currRequest.URLFormat = strings.TrimSpace(parts[1])
-			currRequest.URL = parseURL(currRequest.URLFormat, vars)
+			currRequest.URL = replaceVars(currRequest.URLFormat, vars)
 			currRequest.Variables = copyMap(vars) // vars up to current request
 
 			if i > 0 {
@@ -161,7 +164,7 @@ func readBody(i int, lines []string) (int, string) {
 	return i - 1, body
 }
 
-func parseURL(urlFormat string, vars map[string]string) string {
+func replaceVars(urlFormat string, vars map[string]string) string {
 	url := urlFormat
 
 	for k, v := range vars {
