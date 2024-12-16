@@ -17,14 +17,14 @@ const DefaultConfigFileName = ".resty.json"
 
 // Config holds the settings.
 type Config struct {
+	configFile  string // Config file path, set by application
 	CurlCommand string // Default "curl"
 	Editor      string // Default $EDITOR
-	ColorMode   bool   // Default false, no color
+	ColorMode   bool   // TODO: implement - Default false, no color
 
 	// TODO: Add config settings
 	// - add formatter per header accept types
 
-	configFile string // Config file path, set by application
 }
 
 // ConfigFromReader constructs a Config from JSON data read from the Reader.
@@ -92,7 +92,7 @@ func GetConfigOrDefault(f string) (*Config, error) {
 		}
 
 		// Return default config, if no config file exists
-		if !utils.FileExists(f) {
+		if !utils.FileExists(df) {
 			return &config, nil
 		}
 
