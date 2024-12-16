@@ -10,14 +10,16 @@ type Request struct {
 	Body      string            // Request body data
 }
 
-func (r Request) BuildCurlArgs() []string {
+func (r Request) BuildCurlArgs(insecureSSL bool) []string {
 	// TODO: Silent? - args := []string{"-s"} // silent
 	args := []string{}
 
 	// TODO: add curl config args
 
 	// Insecure
-	args = append(args, "-k") // Insecure
+	if insecureSSL {
+		args = append(args, "-k") // Insecure
+	}
 
 	// Verb (-X) and URL
 	args = append(args, []string{"-X", r.Verb, r.URL}...)

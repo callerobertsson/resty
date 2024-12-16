@@ -24,18 +24,27 @@ func TestBuildCurlArgs(t *testing.T) {
 		Body: "{\"a\": 123}",
 	}
 
-	expected := strings.Join([]string{
-		"-k",
+	expectedSlice := []string{
 		"-X",
 		"VERB",
 		"https://base.url/path",
 		"-H 'hkey: hval'",
 		"-d '{\"a\": 123}'",
-	}, ", ")
+	}
 
-	got := strings.Join(vut.BuildCurlArgs(), ", ")
+	expectedSecure := strings.Join(expectedSlice, ", ")
 
-	if expected != got {
-		t.Errorf("BuildCurlArgs() expected\n  %q\nbut got\n  %q", expected, got)
+	got := strings.Join(vut.BuildCurlArgs(false), ", ")
+
+	if expectedSecure != got {
+		t.Errorf("BuildCurlArgs() expected\n  %q\nbut got\n  %q", expectedSecure, got)
+	}
+
+	expectedUnsecure := strings.Join(append([]string{"-k"}, expectedSlice...), ", ")
+
+	got = strings.Join(vut.BuildCurlArgs(true), ", ")
+
+	if expectedUnsecure != got {
+		t.Errorf("BuildCurlArgs() expected\n  %q\nbut got\n  %q", expectedUnsecure, got)
 	}
 }

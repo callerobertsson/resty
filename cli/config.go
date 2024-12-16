@@ -21,6 +21,7 @@ type Config struct {
 	CurlCommand string // Default "curl"
 	Editor      string // Default $EDITOR
 	ColorMode   bool   // TODO: implement - Default false, no color
+	InsecureSSL bool   // Default false
 
 	// TODO: Add config settings
 	// - add formatter per header accept types

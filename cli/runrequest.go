@@ -9,7 +9,7 @@ import (
 
 func (cli *CLI) runCurrentRequest() error {
 	r := cli.dotHTTP.Requests[cli.current]
-	args := r.BuildCurlArgs()
+	args := r.BuildCurlArgs(cli.config.InsecureSSL)
 
 	fmt.Printf(TITLE + "=== CURL ======================================================================\n" + NORM)
 	fmt.Printf("%s %s\n", cli.config.CurlCommand, strings.Join(args, " "))
