@@ -1,6 +1,6 @@
 # RESTY
 
-_A command line interface for running and managing requests in a
+_A command line interface on Linux and Windows for running and managing requests in a
 .http-file._
 
 ## How it works
