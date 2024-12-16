@@ -8,15 +8,6 @@ import (
 	"strings"
 )
 
-// Terminal color constants.
-const (
-	NORM     = "\033[0m"
-	TITLE    = "\033[1;33m" // title - yellow bold
-	SUBTITLE = "\033[37m"   // greyish
-	SELECTED = "\033[1;32m" // selected - dark green
-	NOTICE   = "\033[1;31m" // red, bold
-)
-
 func (cli *CLI) renderHeader() {
 	conf := ", conf: none"
 	if cli.config.configFile != "" {

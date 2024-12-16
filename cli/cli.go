@@ -23,5 +23,10 @@ func (cli *CLI) Start() error {
 
 	cli.dotHTTP = maybeDH
 
+	colorOff()
+	if cli.config.ColorMode {
+		colorOn()
+	}
+
 	return cli.commandLoop()
 }
