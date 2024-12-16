@@ -3,6 +3,7 @@
 _A command line interface on Linux and Windows for running and managing requests in a
 .http-file._
 
+
 ## How it works
 
 Run `resty` with a .http-file as argument.
@@ -12,8 +13,7 @@ $ resty test_rest.http
 ```
 
 Resty will display the endpoints and let the user navigate and run them
-using the `curl` command. Note that `-k`-flag (insecure) is added to all
-curl calls in the current implemetation.
+using the `curl` command. 
 
 The .http-file can be edited by pressing `e` as long as you have the
 `$EDITOR` environment variable set or set it in the config file.
@@ -40,6 +40,7 @@ RESTY
         -v   version information (default: "false")
 ```
 
+
 ## CLI Commands (`?`)
 ```
 Navigation
@@ -60,16 +61,34 @@ Commands
   q - Quit Resty
 ```
 
+
+## Configuration
+
 Default configuration can be printed by running `resty -g`. Like
 ```
 $ resty -g > ~/.resty.json
 ```
 
+Example config file:
+```
+{
+  "CurlCommand": "notcurl",
+  "Editor": "edlin.exe",
+  "ColorMode": true,
+  "InsecureSSL": true
+}
+```
+Default values if settings are empty or not present:
+- CurlCommand = curl
+- Editor = `$EDITOR` (or `%EDITOR%`)
+- ColorMode = false
+- InsecureSSL = false (if true, the -k flag will be sent to curl)
+
+
 ## Future
 
 Some ideas about possible improvements.
 
-- Make insecure curl mode optional.
 - Add response formatters per header accept values.
     - i.e if header has `accept: application/json` then use formatter
       defined in config (like jq) to format the response.
