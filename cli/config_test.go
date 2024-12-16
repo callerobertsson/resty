@@ -1,10 +1,40 @@
 package cli_test
 
-import "testing"
+import (
+	"encoding/json"
+	"strings"
+	"testing"
 
-func TestConfigFromStream(t *testing.T) {
-	// TODO: Implement ConfigFromStream unit test
-	t.Skip("tbd")
+	"github.com/callerobertsson/resty/cli"
+)
 
-	t.Errorf("should not happen")
+func TestConfigFromJSONReader(t *testing.T) {
+	expectedConfig := cli.Config{
+		CurlCommand: "curlcommand",
+		Editor:      "editor",
+		ColorMode:   true,
+		InsecureSSL: false,
+	}
+
+	bs, _ := json.MarshalIndent(expectedConfig, "", "  ")
+	expectedJSON := string(bs)
+
+	jsonData := `
+{
+  "CurlCommand": "curlcommand",
+  "Editor": "editor",
+  "ColorMode": true,
+  "InsecureSSL": false
+}
+`
+	r := strings.NewReader(jsonData)
+
+	gotConfig, _ := cli.ConfigFromJSONReader(r)
+
+	bs, _ = json.MarshalIndent(gotConfig, "", "  ")
+	gotJSON := string(bs)
+
+	if expectedJSON != gotJSON {
+		t.Errorf("Expected Config to be:\n%s\nbut in was:\n%s\n", expectedJSON, gotJSON)
+	}
 }
