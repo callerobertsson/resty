@@ -136,8 +136,12 @@ func readHeaders(i int, lines []string) (int, map[string]string) {
 		if !hasHeaderValue(lines[i]) {
 			return i, hs
 		}
+
 		parts := strings.Split(lines[i], ":")
-		hs[strings.TrimSpace(parts[0])] = strings.TrimSpace(parts[1])
+		key := strings.ToLower(strings.TrimSpace(parts[0]))
+		val := strings.ToLower(strings.TrimSpace(parts[1]))
+
+		hs[key] = val
 	}
 
 	return i, hs
