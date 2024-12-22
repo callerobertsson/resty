@@ -2,9 +2,11 @@ package cli
 
 import (
 	"fmt"
-	"os"
+	"io"
 	"os/exec"
 	"strings"
+
+	"github.com/callerobertsson/resty/dothttp"
 )
 
 func (cli *CLI) runCurrentRequest() error {
@@ -18,34 +20,94 @@ func (cli *CLI) runCurrentRequest() error {
 		return nil
 	}
 
-	fmt.Printf(TITLE + "=== Response ==================================================================\n" + NORM)
-
-	err := runProcess(cli.config.CurlCommand, args...)
+	bs, err := executeCommand(cli.config.CurlCommand, args...)
 	if err != nil {
 		return err
 	}
 
-	stopMessage("\n")
+	// Get format command and mime type if possible
+	fmtCmd, mimeType := cli.getFormatterAndMimeType(r)
+
+	resp := string(bs)
+	var formatterErr error
+
+	if fmtCmd != "" {
+		maybeResp, err := cli.formatResponse(resp, fmtCmd)
+		if err != nil {
+			formatterErr = err
+		} else {
+			resp = maybeResp
+		}
+	}
+
+	fmt.Printf(TITLE + "=== Response ==================================================================\n" + NORM)
+	fmt.Printf("%s\n", resp)
+
+	info := ""
+	if fmtCmd != "" && mimeType != "" {
+		info = fmt.Sprintf(", formatted %q using %q", mimeType, fmtCmd)
+	}
+
+	fmt.Printf("%d chars%s\n", len(resp), info)
+
+	if formatterErr != nil {
+		fmt.Printf("Formatter failed: %v\n", formatterErr)
+	}
+
+	stopMessage("\n") // TODO: maybe ('>' for) saving to file?
 
 	return nil
 }
 
-func runProcess(cmd string, args ...string) error {
-	c, err := exec.LookPath(cmd)
-	if err != nil {
-		return err
+func (cli *CLI) getFormatterAndMimeType(r dothttp.Request) (string, string) {
+	mimeType, ok := r.Headers["accept"]
+	if !ok {
+		return "", ""
 	}
 
-	as := append([]string{c}, args...)
-
-	var attr os.ProcAttr
-	attr.Files = []*os.File{os.Stdin, os.Stdout, os.Stderr}
-
-	p, err := os.StartProcess(c, as, &attr)
-	if err != nil {
-		return err
+	formatter, ok := cli.config.Formatters[mimeType]
+	if !ok {
+		return "", mimeType
 	}
-	_, _ = p.Wait()
 
-	return nil
+	return formatter, mimeType
+}
+
+func (cli *CLI) formatResponse(s string, fmtCmd string) (string, error) {
+
+	fs, err := executeStdinCommand(s, fmtCmd)
+	if err != nil {
+		return "", err
+	}
+
+	return fs, nil
+}
+
+func executeStdinCommand(data, command string, args ...string) (string, error) {
+	cmd := exec.Command(command, args...)
+	stdin, err := cmd.StdinPipe()
+	if err != nil {
+		return "", err
+	}
+
+	go func() {
+		defer stdin.Close()
+		io.WriteString(stdin, data)
+	}()
+
+	out, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+
+	return string(out), nil
+}
+
+func executeCommand(cmd string, args ...string) (string, error) {
+	out, err := exec.Command(cmd, args...).Output()
+	if err != nil {
+		return "", err
+	}
+
+	return string(out), nil
 }

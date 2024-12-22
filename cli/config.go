@@ -17,15 +17,12 @@ const DefaultConfigFileName = ".resty.json"
 
 // Config holds the settings.
 type Config struct {
-	configFile  string // Config file path, set by application
-	CurlCommand string // Default "curl"
-	Editor      string // Default $EDITOR
-	ColorMode   bool   // TODO: implement - Default false, no color
-	InsecureSSL bool   // Default false
-
-	// TODO: Add config settings
-	// - add formatter per header accept types
-
+	configFile  string            // Config file path, set by application
+	CurlCommand string            // Default "curl"
+	Formatters  map[string]string // Mime type: Formatter command
+	Editor      string            // Default $EDITOR
+	ColorMode   bool              // TODO: implement - Default false, no color
+	InsecureSSL bool              // Default false
 }
 
 // ConfigFromReader constructs a Config from JSON data read from the Reader.

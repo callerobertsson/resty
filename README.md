@@ -5,6 +5,7 @@ _A command line interface on Linux and Windows for running and managing requests
 
 ![Screenshot](cli.png)
 
+
 ## How it works
 
 Run `resty` with a .http-file as argument.
@@ -76,23 +77,27 @@ Example config file:
   "CurlCommand": "notcurl",
   "Editor": "edlin.exe",
   "ColorMode": true,
-  "InsecureSSL": true
+  "InsecureSSL": true,
+  "Formatters": {
+      "application/json": "jq"
+  }
 }
 ```
+
 Default values if settings are empty or not present:
 - CurlCommand = curl
 - Editor = `$EDITOR` (or `%EDITOR%`)
 - ColorMode = false
 - InsecureSSL = false (if true, the -k flag will be sent to curl)
+- Formatters is a map from mime-type to executable program, like `jq`,
+  that formats the response data. Note that the accept header must be
+  set for the request.
 
 
 ## Future
 
 Some ideas about possible improvements.
 
-- Add response formatters per header accept values.
-    - i.e if header has `accept: application/json` then use formatter
-      defined in config (like jq) to format the response.
 - Maybe replace curl command execution with home made implementation.
 
 /Calle
