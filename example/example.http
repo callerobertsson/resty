@@ -1,0 +1,27 @@
+### TEST HTTP
+#
+
+@place=Marks%20Kommun
+
+### @name Weather
+GET wttr.in/{{place}}
+
+### @name Rain
+GET v2.wttr.in/Marks%20Kommun
+
+### @name Sunet
+GET https://sunet.se
+
+### @name Poke 1
+@base_poke=https://pokeapi.co/api/v2/pokemon
+@pokemon=pikachu
+@pokemon2=bulbasaur
+
+GET {{base_poke}}/{{pokemon}} HTTP/1.1
+Accept: application/json
+
+### @name Poke 2
+GET {{base_poke}}/{{pokemon2}} HTTP/1.1
+Accept: application/json
+
+

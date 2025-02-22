@@ -5,7 +5,7 @@
 
 BINARY=resty
 
-HTTPTESTFILE=_dev/jsonplaceholder.http
+HTTPTESTFILE=example/example.http
 
 VERSION=`git describe --tags`
 BUILD=`date +%FT%T%z`
@@ -29,6 +29,8 @@ build-win:
 
 test:
 	go test -v ./...
+
+image:
 
 run: clean build
 	./resty ${HTTPTESTFILE}
