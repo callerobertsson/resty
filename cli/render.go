@@ -3,8 +3,6 @@ package cli
 import (
 	"fmt"
 	"os"
-	"os/exec"
-	"runtime"
 	"strings"
 )
 
@@ -66,19 +64,6 @@ func renderStringMap(vars map[string]string, indent string) {
 	for k, v := range vars {
 		fmt.Printf("%s%s = %q\n", indent, k, v)
 	}
-}
-
-func renderClear() {
-	if runtime.GOOS == "windows" {
-		cmd := exec.Command("cmd", "/c", "cls")
-		cmd.Stdout = os.Stdout
-		_ = cmd.Run()
-		return
-	}
-
-	cmd := exec.Command("clear")
-	cmd.Stdout = os.Stdout
-	_ = cmd.Run()
 }
 
 func confirmMessage(f string, a ...any) bool {

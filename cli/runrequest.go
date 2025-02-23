@@ -13,7 +13,7 @@ func (cli *CLI) runCurrentRequest() error {
 	r := cli.dotHTTP.Requests[cli.current]
 	args := r.BuildCurlArgs(cli.config.InsecureSSL)
 
-	fmt.Printf(TITLE + "=== CURL ======================================================================\n" + NORM)
+	fmt.Println(TITLE + "=== CURL ======================================================================" + NORM)
 	fmt.Printf("%s %s\n", cli.config.CurlCommand, strings.Join(args, " "))
 
 	if r.Verb != "GET" && !confirmMessage("Are you sure?\n") {
@@ -40,7 +40,7 @@ func (cli *CLI) runCurrentRequest() error {
 		}
 	}
 
-	fmt.Printf(TITLE + "=== Response ==================================================================\n" + NORM)
+	fmt.Println(TITLE + "=== Response ==================================================================" + NORM)
 	fmt.Printf("%s\n", resp)
 
 	info := ""
