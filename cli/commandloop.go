@@ -17,7 +17,7 @@ func (cli *CLI) commandLoop() error {
 
 	// Command loop
 	for {
-		renderClear()
+		utils.RenderClear()
 
 		cli.renderHeader()
 		cli.renderUI()
@@ -28,8 +28,9 @@ func (cli *CLI) commandLoop() error {
 		r := rune(buf[0])
 
 		switch {
-		case r == 'q':
+		case r == 'q' || r == 27:
 			handleQuit()
+			return nil
 		case r == 'g':
 			cli.handleFirst()
 		case r == 'k' || r == 65:
@@ -55,7 +56,7 @@ func (cli *CLI) commandLoop() error {
 func handleQuit() {
 	fmt.Println("\nbye!")
 	utils.SetBufferedInput()
-	os.Exit(0)
+	// os.Exit(0)
 }
 
 func (cli *CLI) handleFirst() {
@@ -83,7 +84,7 @@ func (cli *CLI) handleLast() {
 func (cli *CLI) handleEdit() {
 	// Edit .http-file (until no errors)
 	for {
-		renderClear()
+		utils.RenderClear()
 		_, err := utils.EditFile(cli.httpFile, cli.config.Editor)
 		if err != nil {
 			stopMessage("Error editing %v: %v\n", cli.httpFile, err)
@@ -104,21 +105,21 @@ func (cli *CLI) handleEdit() {
 
 func (cli *CLI) handleConfig() {
 	// Config - show config file
-	renderClear()
+	utils.RenderClear()
 	cli.renderConfig()
 	stopMessage("\n")
 }
 
 func (cli *CLI) handleVariables() {
 	// Variables - show variables active for current request
-	renderClear()
+	utils.RenderClear()
 	cli.renderVariables()
 	stopMessage("\n")
 }
 
 func (cli *CLI) handleRun() {
 	// Run current request
-	renderClear()
+	utils.RenderClear()
 	// cli.renderRequestInfo()
 	err := cli.runCurrentRequest()
 	if err != nil {
@@ -128,7 +129,7 @@ func (cli *CLI) handleRun() {
 
 func handleHelp() {
 	// Show help
-	renderClear()
+	utils.RenderClear()
 	stopMessage("%v\n", keyHelpText)
 }
 

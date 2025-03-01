@@ -117,7 +117,7 @@ func (dotHTTP *DotHTTP) LoadHTTPFileLines(lines []string) error {
 				newNewI, body := readBody(i+1, lines)
 				i = newNewI + 1 // for-loop i++ adjustment
 
-				currRequest.Body = strings.TrimSpace(body)
+				currRequest.Body = replaceVars(strings.TrimSpace(body), vars)
 			}
 
 			rs = append(rs, currRequest) // store previous request
@@ -168,15 +168,16 @@ func readBody(i int, lines []string) (int, string) {
 	return i - 1, body
 }
 
-func replaceVars(urlFormat string, vars map[string]string) string {
-	url := urlFormat
+func replaceVars(s string, vars map[string]string) string {
+	// {{var}}
+	r := s
 
 	for k, v := range vars {
 		k = strings.TrimLeft(k, "@")
-		url = strings.ReplaceAll(url, "{{"+k+"}}", v)
+		r = strings.ReplaceAll(r, "{{"+k+"}}", v)
 	}
 
-	return url
+	return r
 }
 
 func parseName(s string) string {

@@ -77,6 +77,7 @@ func ConfigJSON(c Config) string {
 // the empty string it tries to read the default config file. If that fails an
 // empty Config, with default values, are returned.
 func GetConfigOrDefault(f string) (*Config, error) {
+
 	// Default config
 	config := Config{
 		CurlCommand: "curl",

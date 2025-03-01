@@ -7,13 +7,14 @@ import (
 	"strings"
 
 	"github.com/callerobertsson/resty/dothttp"
+	"github.com/callerobertsson/resty/utils"
 )
 
 func (cli *CLI) runCurrentRequest() error {
 	r := cli.dotHTTP.Requests[cli.current]
 	args := r.BuildCurlArgs(cli.config.InsecureSSL)
 
-	fmt.Printf(TITLE + "=== CURL ======================================================================\n" + NORM)
+	fmt.Println(utils.TITLE + "=== CURL ======================================================================" + utils.NORM)
 	fmt.Printf("%s %s\n", cli.config.CurlCommand, strings.Join(args, " "))
 
 	if r.Verb != "GET" && !confirmMessage("Are you sure?\n") {
@@ -40,10 +41,11 @@ func (cli *CLI) runCurrentRequest() error {
 		}
 	}
 
-	fmt.Printf(TITLE + "=== Response ==================================================================\n" + NORM)
+	fmt.Println(utils.TITLE + "=== Response ==================================================================" + utils.NORM)
 	fmt.Printf("%s\n", resp)
+	fmt.Println(utils.TITLE + "===============================================================================" + utils.NORM)
 
-	info := ""
+	info := ", raw"
 	if fmtCmd != "" && mimeType != "" {
 		info = fmt.Sprintf(", formatted %q using %q", mimeType, fmtCmd)
 	}

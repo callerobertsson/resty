@@ -1,5 +1,6 @@
 {
-  "CurlCommand": "_dev/curl",
-  "Editor": "",
-  "ColorMode": false
+  "CurlCommand": "curl",
+  "Editor": "nvim",
+  "ColorMode": false,
+  "InsecureSSL": true
 }

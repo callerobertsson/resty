@@ -3,28 +3,34 @@ package cli
 import (
 	"fmt"
 	"os"
-	"os/exec"
-	"runtime"
 	"strings"
+
+	"github.com/callerobertsson/resty/utils"
 )
 
 func (cli *CLI) renderHeader() {
+	fmt.Printf("%s", cli.headerString())
+}
+
+func (cli *CLI) headerString() string {
+
 	conf := ", conf: none"
 	if cli.config.configFile != "" {
 		conf = " - " + cli.config.configFile
 	}
-	fmt.Printf(TITLE+"RESTY "+SUBTITLE+"%s%s\n\n"+NORM, cli.httpFile, conf)
+
+	return fmt.Sprintf(utils.TITLE+"RESTY "+utils.SUBTITLE+"%s%s\n\n"+utils.NORM, cli.httpFile, conf)
 }
 
 func (cli *CLI) renderPrompt() {
-	fmt.Printf(SUBTITLE + "\n[revcq?] > " + NORM)
+	fmt.Printf(utils.SUBTITLE + "\n[revcq?] > " + utils.NORM)
 }
 
 func (cli *CLI) renderUI() {
 	for i, r := range cli.dotHTTP.Requests {
-		indicator := NORM + " "
+		indicator := utils.NORM + " "
 		if i == cli.current {
-			indicator = NOTICE + ">" + SELECTED
+			indicator = utils.NOTICE + ">" + utils.SELECTED
 		}
 
 		if r.Name == "" {
@@ -50,7 +56,7 @@ func (cli *CLI) renderUI() {
 
 func (cli *CLI) renderVariables() {
 	if len(cli.dotHTTP.Requests[cli.current].Variables) > 0 {
-		fmt.Printf(TITLE + "Variables:\n" + NORM)
+		fmt.Printf(utils.TITLE + "Variables:\n" + utils.NORM)
 		renderStringMap(cli.dotHTTP.Requests[cli.current].Variables, "  ")
 	} else {
 		fmt.Printf("No variables\n")
@@ -58,7 +64,7 @@ func (cli *CLI) renderVariables() {
 }
 
 func (cli *CLI) renderConfig() {
-	fmt.Printf(TITLE+"Config in %s:\n"+NORM, cli.config.configFile)
+	fmt.Printf(utils.TITLE+"Config in %s:\n"+utils.NORM, cli.config.configFile)
 	fmt.Printf("%s", ConfigJSON(*cli.config))
 }
 
@@ -68,22 +74,9 @@ func renderStringMap(vars map[string]string, indent string) {
 	}
 }
 
-func renderClear() {
-	if runtime.GOOS == "windows" {
-		cmd := exec.Command("cmd", "/c", "cls")
-		cmd.Stdout = os.Stdout
-		_ = cmd.Run()
-		return
-	}
-
-	cmd := exec.Command("clear")
-	cmd.Stdout = os.Stdout
-	_ = cmd.Run()
-}
-
 func confirmMessage(f string, a ...any) bool {
 	fmt.Printf(f, a...)
-	fmt.Printf(SELECTED + "-- press 'y' to continue --\n" + NORM)
+	fmt.Printf(utils.SELECTED + "-- press 'y' to continue --\n" + utils.NORM)
 	bs := make([]byte, 1)
 	_, _ = os.Stdin.Read(bs)
 
@@ -92,6 +85,6 @@ func confirmMessage(f string, a ...any) bool {
 
 func stopMessage(f string, a ...any) {
 	fmt.Printf(f, a...)
-	fmt.Printf(SELECTED + "-- press any key to continue --\n" + NORM)
+	fmt.Printf(utils.SELECTED + "-- press any key to continue --\n" + utils.NORM)
 	_, _ = os.Stdin.Read(make([]byte, 1))
 }

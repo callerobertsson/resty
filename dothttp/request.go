@@ -26,12 +26,14 @@ func (r Request) BuildCurlArgs(insecureSSL bool) []string {
 
 	// Headers (-H)
 	for k, v := range r.Headers {
-		args = append(args, "-H '"+k+": "+v+"'")
+		args = append(args, "-H")
+		args = append(args, k+": "+v)
 	}
 
 	// Body (-d)
 	if r.Body != "" {
-		args = append(args, "-d '"+r.Body+"'")
+		args = append(args, "-d")
+		args = append(args, r.Body)
 	}
 
 	// // URL

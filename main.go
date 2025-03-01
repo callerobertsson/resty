@@ -17,7 +17,7 @@ var (
 
 	// Command line flags parsed in parseCommandLine().
 	configFile     = ""
-	httpFile       = ""
+	path           = ""
 	showVersion    = false
 	generateConfig = false
 )
@@ -33,11 +33,27 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Create CLI
-	cli := cli.New(httpFile, config)
+	if path == "" {
+		path = "."
+	}
 
-	if err = cli.Start(); err != nil {
-		fmt.Printf("Error running Resty: %v\n", err)
+	fi, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		fmt.Printf("Path %q does not exist", path)
+		os.Exit(1)
+	}
+
+	switch {
+	case fi.IsDir():
+		if err = cli.New(config).StartDirectory(path); err != nil {
+			fmt.Printf("\nError: %v\n", err)
+			os.Exit(1)
+		}
+	default:
+		if err = cli.New(config).StartFile(path); err != nil {
+			fmt.Printf("\nError: %v", err)
+			os.Exit(1)
+		}
 	}
 }
 
@@ -62,13 +78,7 @@ func parseCommandLine() {
 	}
 
 	if len(flag.Args()) > 0 {
-		httpFile = flag.Args()[0]
-	}
-
-	if httpFile == "" {
-		fmt.Printf("Error: Need a .httpFile as argument\n")
-		fmt.Printf("Use -h for help\n")
-		os.Exit(1)
+		path = flag.Args()[0]
 	}
 }
 
@@ -78,13 +88,22 @@ func usage() {
 
 	fmt.Fprintf(out, `RESTY
     SYNOPSIS
-          resty [flags] <.http-file>
+          resty [options] [<.http-file>|<directory>]
 
     DESCRIPTON
-          Resty opens the <.http-file> and displays list of the requests.
-          The list can be navigated using vim-like bindings or arrow keys.
+          By default, resty will open in directory mod and list all .http-file in current directory
+          and below. The user can then select which one to open.
 
-          Requests can be run and the .http-file edited.
+          If there is an argument on the command line, resty will check if it is a directory and
+          open it in directory mode. If the argument is a file, resty will open it in file mode.
+
+          Resty opens <.http-file> and displays list of the requests. The list can be navigated
+          using vim-like bindings or arrow keys.
+
+          Requests can be run by pressing '<enter>' and the .http-file edited by pressing 'e'.
+
+          A default config file can be printed by using the '-g' flag. Modify it and put it in
+		  $HOME/.resty.json.
 
           For more info press '?' to show the available commands.
 
