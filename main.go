@@ -102,6 +102,9 @@ func usage() {
 
           Requests can be run by pressing '<enter>' and the .http-file edited by pressing 'e'.
 
+          A default config file can be printed by using the '-g' flag. Modify it and put it in
+		  $HOME/.resty.json.
+
           For more info press '?' to show the available commands.
 
     OPTIONS

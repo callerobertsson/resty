@@ -33,14 +33,16 @@ func FuzzyListPicker(t, p string, ss []string) (string, error) {
 
 		for i, f := range fss {
 			marker := " "
+			col := NORM
 			if i == current {
-				marker = ">"
+				marker = NOTICE + ">" + NORM
+				col = SELECTED
 			}
 
-			fmt.Printf(" %s %v\n", marker, f)
+			fmt.Printf(" %s %s%v\n"+NORM, marker, col, f)
 		}
 
-		fmt.Printf("%s > %s", p, input)
+		fmt.Printf("%s > %s", SUBTITLE+p+NORM, SELECTED+input+NORM)
 
 		_, _ = os.Stdin.Read(buf)
 		r := rune(buf[0])

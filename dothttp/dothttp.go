@@ -169,6 +169,7 @@ func readBody(i int, lines []string) (int, string) {
 }
 
 func replaceVars(s string, vars map[string]string) string {
+	// {{var}}
 	r := s
 
 	for k, v := range vars {

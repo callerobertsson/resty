@@ -1,5 +1,5 @@
-// Package cli color functions.
-package cli
+// Package utils color functions.
+package utils
 
 // Terminal color constants.
 var (
@@ -11,7 +11,7 @@ var (
 )
 
 // Turn colors on.
-func colorOn() {
+func ColorOn() {
 	NORM = "\033[0m"
 	TITLE = "\033[1;33m"    // title - yellow bold
 	SUBTITLE = "\033[37m"   // greyish
@@ -20,7 +20,7 @@ func colorOn() {
 }
 
 // Turn color off.
-func colorOff() {
+func ColorOff() {
 	NORM = ""
 	TITLE = ""    // title - yellow bold
 	SUBTITLE = "" // greyish

@@ -2,6 +2,44 @@
 #
 
 @place=Marks%20Kommun
+@gorest_url=https://gorest.co.in/public/v2
+
+### Dummy POST Test
+POST http://localhost:12345/echobody
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer ACCESS-TOKEN
+
+data
+
+
+
+
+
+###
+#
+#
+{
+    "name":"Inghe Brahe",
+    "korv":"spad"
+}
+
+### Users
+GET {{gorest_url}}
+
+### Create user
+POST {{gorest_url}}/users
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer ACCESS-TOKEN
+
+{
+    "name":"Tenali Ramakrishna",
+    "gender":"male",
+    "email":"tenali.ramakrishna@15ce.com",
+    "status":"active"
+}
+
 
 ### @name Weather
 GET wttr.in/{{place}}
