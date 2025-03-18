@@ -3,6 +3,11 @@
 
 @place=Marks%20Kommun
 @gorest_url=https://gorest.co.in/public/v2
+@apa=bepa
+
+### Dummy Var Test
+GET http://{{apa}}/{{hardcoded}}/{{envfile}}
+
 
 ### Dummy POST Test
 POST http://localhost:12345/echobody

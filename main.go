@@ -2,9 +2,11 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/callerobertsson/resty/cli"
 )
@@ -17,6 +19,7 @@ var (
 
 	// Command line flags parsed in parseCommandLine().
 	configFile     = ""
+	envFile        = ""
 	path           = ""
 	showVersion    = false
 	generateConfig = false
@@ -43,14 +46,25 @@ func main() {
 		os.Exit(1)
 	}
 
+	// TODO: Generate shared environment if -e has a value
+	env := map[string]string{}
+	if envFile != "" {
+		env, err = readEnvFile(envFile)
+		if err != nil {
+			fmt.Printf("\nError: Could not read env file %q: %s\n", envFile, err)
+			os.Exit(1)
+		}
+	}
+	env["hardcoded"] = "hrdcded"
+
 	switch {
 	case fi.IsDir():
-		if err = cli.New(config).StartDirectory(path); err != nil {
+		if err = cli.New(config, env).StartDirectory(path); err != nil {
 			fmt.Printf("\nError: %v\n", err)
 			os.Exit(1)
 		}
 	default:
-		if err = cli.New(config).StartFile(path); err != nil {
+		if err = cli.New(config, env).StartFile(path); err != nil {
 			fmt.Printf("\nError: %v", err)
 			os.Exit(1)
 		}
@@ -60,6 +74,7 @@ func main() {
 // parseCommandLine handles command line flags parsing.
 func parseCommandLine() {
 	flag.StringVar(&configFile, "c", "", "config file")
+	flag.StringVar(&envFile, "e", "", "env file")
 	flag.BoolVar(&showVersion, "v", false, "version information")
 	flag.BoolVar(&generateConfig, "g", false, "print default config file")
 
@@ -80,6 +95,42 @@ func parseCommandLine() {
 	if len(flag.Args()) > 0 {
 		path = flag.Args()[0]
 	}
+}
+
+func readEnvFile(f string) (map[string]string, error) {
+
+	file, err := os.Open(f)
+	if err != nil {
+		return map[string]string{}, err
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+
+	env := map[string]string{}
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		line = strings.TrimSpace(line)
+
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+
+		kv := strings.Split(line, "=")
+
+		if len(kv) < 2 {
+			continue
+		}
+
+		key := strings.TrimSpace(kv[0])
+		val := strings.TrimSpace(strings.Join(kv[1:], "="))
+
+		env[key] = val
+	}
+
+	return env, nil
 }
 
 func usage() {

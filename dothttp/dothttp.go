@@ -13,6 +13,7 @@ import (
 
 type DotHTTP struct {
 	Requests []Request
+	Env      map[string]string
 }
 
 // Supported Verbs.
@@ -23,8 +24,8 @@ func New() *DotHTTP {
 	return &DotHTTP{}
 }
 
-func NewFromFile(f string) (*DotHTTP, error) {
-	dotHTTP := DotHTTP{}
+func NewFromFile(f string, env map[string]string) (*DotHTTP, error) {
+	dotHTTP := DotHTTP{Env: env}
 	err := dotHTTP.LoadHTTPFile(f)
 	return &dotHTTP, err
 }
@@ -53,7 +54,13 @@ func (dotHTTP *DotHTTP) LoadHTTPFile(f string) error {
 
 func (dotHTTP *DotHTTP) LoadHTTPFileLines(lines []string) error {
 	rs := []Request{}
+
 	vars := map[string]string{}
+
+	// Add env file vars
+	for k, v := range dotHTTP.Env {
+		vars[k] = v
+	}
 
 	currRequest := Request{Headers: map[string]string{}}
 
