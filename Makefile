@@ -24,6 +24,9 @@ all: build build-win
 build:
 	go build ${LDFLAGS} -o ${BINARY}
 
+build-mac:
+	GOOS=darwin GOARCH=amd64 go build ${LDFLAGS} -o ${BINARY}-darwin-amd64
+
 build-win:
 	GOOS=windows GOARCH=amd64 go build ${LDFLAGS} -o ${BINARY}.exe
 
