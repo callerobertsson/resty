@@ -21,6 +21,8 @@ func (cli *CLI) runCurrentRequest() error {
 		return nil
 	}
 
+	fmt.Println(utils.SUBTITLE + "Calling API..." + utils.NORM)
+
 	bs, err := executeCommand(cli.config.CurlCommand, args...)
 	if err != nil {
 		return err
