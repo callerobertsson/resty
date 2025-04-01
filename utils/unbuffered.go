@@ -27,10 +27,17 @@ func SetUnbufferedInput() {
 		return
 	}
 
+	// Disable buffering and set no display
+	f := "-F"
+	if runtime.GOOS == "darwin" {
+		// Ugly hack because Macos (Darwin) needs -f iso -F
+		f = "-f"
+	}
+
 	// Disable input buffering
-	_ = exec.Command("stty", "-F", "/dev/tty", "cbreak", "min", "1").Run()
+	_ = exec.Command("stty", f, "/dev/tty", "cbreak", "min", "1").Run()
 	// No character echo
-	_ = exec.Command("stty", "-F", "/dev/tty", "-echo").Run()
+	_ = exec.Command("stty", f, "/dev/tty", "-echo").Run()
 }
 
 // UnbufferedOff turns on normal buffering and character echo.
