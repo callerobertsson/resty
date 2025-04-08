@@ -23,7 +23,7 @@ func (cli *CLI) headerString() string {
 }
 
 func (cli *CLI) renderPrompt() {
-	fmt.Printf(utils.SUBTITLE + "\n[revcq?] > " + utils.NORM)
+	fmt.Printf(utils.SUBTITLE + "\n[rRevcq?] > " + utils.NORM)
 }
 
 func (cli *CLI) renderUI() {
@@ -87,4 +87,13 @@ func stopMessage(f string, a ...any) {
 	fmt.Printf(f, a...)
 	fmt.Printf(utils.SELECTED + "-- press any key to continue --\n" + utils.NORM)
 	_, _ = os.Stdin.Read(make([]byte, 1))
+}
+
+func getByteMessage(f string, a ...any) byte {
+	fmt.Printf(f, a...)
+	// fmt.Printf(utils.SELECTED + "-- press any key to continue --\n" + utils.NORM)
+	bs := make([]byte, 1)
+	_, _ = os.Stdin.Read(bs)
+
+	return bs[0]
 }

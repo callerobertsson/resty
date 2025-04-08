@@ -1,8 +1,10 @@
 package cli
 
 import (
+	"bufio"
 	"fmt"
 	"io"
+	"os"
 	"os/exec"
 	"strings"
 
@@ -10,8 +12,26 @@ import (
 	"github.com/callerobertsson/resty/utils"
 )
 
+func (cli *CLI) runAllRequests() error {
+	rs := cli.dotHTTP.Requests
+
+	for _, r := range rs {
+		err := cli.runRequest(r)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (cli *CLI) runCurrentRequest() error {
 	r := cli.dotHTTP.Requests[cli.current]
+	return cli.runRequest(r)
+}
+
+func (cli *CLI) runRequest(r dothttp.Request) error {
+
 	args := r.BuildCurlArgs(cli.config.InsecureSSL)
 
 	fmt.Println(utils.TITLE + "=== CURL ======================================================================" + utils.NORM)
@@ -58,15 +78,29 @@ func (cli *CLI) runCurrentRequest() error {
 		fmt.Printf("Formatter failed: %v\n", formatterErr)
 	}
 
-	stopMessage("\n") // TODO: maybe ('>' for) saving to file?
+	b := getByteMessage(utils.SUBTITLE + "Continue [y>] " + utils.NORM)
+	if b == byte('>') {
+		fmt.Printf(utils.SELECTED + "\nEnter file path: " + utils.NORM)
+		reader := bufio.NewReader(os.Stdin)
+		utils.SetBufferedInput()
+		filePath, _ := reader.ReadString('\n')
+		utils.SetUnbufferedInput()
+
+		err := os.WriteFile(strings.TrimSpace(filePath), []byte(resp), 0666)
+		if err != nil {
+			fmt.Printf(utils.NOTICE+"Failed to write file: %v\n"+utils.NORM, err)
+			stopMessage("\n")
+		}
+	}
 
 	return nil
 }
 
 func (cli *CLI) getFormatterAndMimeType(r dothttp.Request) (string, string) {
 	mimeType, ok := r.Headers["accept"]
-	if !ok {
-		return "", ""
+
+	if mimeType == "" {
+		mimeType = "*"
 	}
 
 	formatter, ok := cli.config.Formatters[mimeType]
