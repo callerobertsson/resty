@@ -24,10 +24,12 @@ all: build build-win
 build:
 	go build ${LDFLAGS} -o ${BINARY}
 
+build-all: build build-win build-darwin-amd64 build-linux-x86
+
 build-linux-x86:
 	GOOS=linux GOARCH=386 go build ${LDFLAGS} -o ${BINARY}-linux-x86
 
-build-mac:
+build-darwin-amd64:
 	GOOS=darwin GOARCH=amd64 go build ${LDFLAGS} -o ${BINARY}-darwin-amd64
 
 build-win:

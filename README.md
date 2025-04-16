@@ -65,12 +65,17 @@ Navigation
 Commands
 
   r - Run currently selected request, <enter>
+  R - Run all requests in current .http-file
   v - View variables set for current request
   e - Edit the input file using Editor config setting or $EDITOR environment variable
   c - Show config settings
 
   ? - Show this help
   q - Quit Resty
+
+After Request has run
+  > - save to file
+  any other key will continue
 ```
 
 
@@ -89,6 +94,7 @@ Example config file:
   "ColorMode": true,
   "InsecureSSL": true,
   "Formatters": {
+      "*": "cat"
       "application/json": "jq"
   }
 }
@@ -101,15 +107,15 @@ Default values if settings are empty or not present:
 - InsecureSSL = false (if true, the -k flag will be sent to curl)
 - Formatters is a map from mime-type to executable program, like `jq`,
   that formats the response data. Note that the accept header must be
-  set for the request.
+  set for the request. A default formatter can be configured by using
+  `"*": "<default_formatter>"`.
 
 
 ## Future
 
 Some ideas about possible improvements.
 
-- Add setting for default formatter.
-- Save or format after the response is printed.
+- Fix arrow keys when navigating the requests.
 - Maybe replace curl command execution with home made implementation.
 
 /Calle

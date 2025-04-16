@@ -47,6 +47,8 @@ func (cli *CLI) commandLoop() error {
 			cli.handleVariables()
 		case r == 'r' || r == '\n':
 			cli.handleRun()
+		case r == 'R' || r == '\n':
+			cli.handleRunAll()
 		case r == '?':
 			handleHelp()
 		}
@@ -127,6 +129,16 @@ func (cli *CLI) handleRun() {
 	}
 }
 
+func (cli *CLI) handleRunAll() {
+	// Run current request
+	utils.RenderClear()
+	// cli.renderRequestInfo()
+	err := cli.runAllRequests()
+	if err != nil {
+		stopMessage("Error: %v\n", err)
+	}
+}
+
 func handleHelp() {
 	// Show help
 	utils.RenderClear()
@@ -145,6 +157,7 @@ Navigation
 Commands
 
   r - Run currently selected request, <enter>
+  R - Run all requests in current .http-file
   v - View variables set for current request
   e - Edit the input file using Editor config setting or $EDITOR environment variable
   c - Show config settings
