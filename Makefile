@@ -45,6 +45,8 @@ run: clean build
 
 clean:
 	@if [ -f ${BINARY} ] ; then rm ${BINARY}; fi
+	@if [ -f ${BINARY}-darwin-amd64 ] ; then rm ${BINARY}-darwin-amd64; fi
+	@if [ -f ${BINARY}-linux-x86 ] ; then rm ${BINARY}-linux-x86; fi
 	@if [ -f ${BINARY}.exe ] ; then rm ${BINARY}.exe ; fi
 
 .PHONY: clean build
