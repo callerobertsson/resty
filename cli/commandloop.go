@@ -13,7 +13,7 @@ func (cli *CLI) commandLoop() error {
 	defer utils.SetBufferedInput()
 
 	// Single byte buffer for keypresses
-	buf := make([]byte, 1)
+	buf := make([]byte, 2)
 
 	// Command loop
 	for {
@@ -28,7 +28,7 @@ func (cli *CLI) commandLoop() error {
 		r := rune(buf[0])
 
 		switch {
-		case r == 'q' || r == 27:
+		case r == 'q':
 			handleQuit()
 			return nil
 		case r == 'g':
