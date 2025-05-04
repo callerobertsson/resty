@@ -14,6 +14,7 @@ func (cli *CLI) selectEnvFile(d string) (string, error) {
 	}
 
 	title := cli.headerString()
+	title += utils.TITLE + "Select Environment File:\n\n" + utils.NORM
 
 	envFiles = append([]string{noFile}, envFiles...)
 

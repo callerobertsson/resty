@@ -17,6 +17,7 @@ func (cli *CLI) selectHTTPFileLoop(d string) error {
 		}
 
 		title := cli.headerString()
+		title += utils.TITLE + "Select HTTP File:\n\n" + utils.NORM
 
 		prompt := "\nfuzzy"
 		f, err := utils.FuzzyListPicker(title, prompt, httpFiles)
