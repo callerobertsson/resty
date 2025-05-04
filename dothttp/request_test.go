@@ -28,8 +28,10 @@ func TestBuildCurlArgs(t *testing.T) {
 		"-X",
 		"VERB",
 		"https://base.url/path",
-		"-H 'hkey: hval'",
-		"-d '{\"a\": 123}'",
+		"-H",
+		"hkey: hval",
+		"-d",
+		"{\"a\": 123}",
 	}
 
 	expectedSecure := strings.Join(expectedSlice, ", ")

@@ -1,3 +1,4 @@
+// Package utils fuzzy file picker.
 package utils
 
 import (
@@ -13,7 +14,6 @@ import (
 // FuzzyListPicker lets the user search and navigate the strings in ss. It returns the
 // currently selected string on <enter>.
 func FuzzyListPicker(t, p string, ss []string) (string, error) {
-
 	SetUnbufferedInput()
 	defer SetBufferedInput()
 
@@ -68,12 +68,12 @@ func FuzzyListPicker(t, p string, ss []string) (string, error) {
 			current = 0
 			fss = ss
 			if len(input) > 0 {
-				input = string(input[0 : len(input)-1])
+				input = input[0 : len(input)-1]
 			}
 		case r == 27: // esc
 			// do nothing by design (up and down arrows are spooky)
 		default:
-			input = input + string(r)
+			input += string(r)
 		}
 
 		fss = filter(fss, input)
@@ -81,7 +81,6 @@ func FuzzyListPicker(t, p string, ss []string) (string, error) {
 }
 
 func filter(ss []string, m string) []string {
-
 	re, err := regexp.Compile(strings.Join(strings.Split(strings.ToLower(m), ""), ".*"))
 	if err != nil {
 		return []string{}
@@ -99,7 +98,6 @@ func filter(ss []string, m string) []string {
 }
 
 func ListPicker(p string, ss []string) (int, string) {
-
 	for i, f := range ss {
 		fmt.Printf("%4d: %v\n", i+1, f)
 	}

@@ -29,8 +29,9 @@ RESTY
           resty [options] [<.http-file>|<directory>]
 
     DESCRIPTON
-          By default, resty will open in directory mod and list all .http-file in current directory
-          and below. The user can then select which one to open.
+          By default, resty will find all .env-files in current directory and let the user select
+          one or none, the all .http-files will be listed. The user can then select which one to
+          open.
 
           If there is an argument on the command line, resty will check if it is a directory and
           open it in directory mode. If the argument is a file, resty will open it in file mode.

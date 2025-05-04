@@ -7,24 +7,30 @@ import (
 	"strings"
 )
 
-var reHttpFile = regexp.MustCompile("\\.http$")
+var reHTTPFile = regexp.MustCompile(`\.http$`)
+var reEnvFile = regexp.MustCompile(`\.env$`)
 
-// FileExists checks if file path f exists
+// FileExists checks if file path f exists.
 func FileExists(f string) bool {
 	_, err := os.Stat(f)
 	return !errors.Is(err, os.ErrNotExist)
 }
 
-// GetHttpFile returns file paths for all .http file in directory path d with a recursive option
-func GetHttpFilePaths(d string, recure bool) []string {
-	fs, _ := getMatchingFiles(d, reHttpFile, recure)
+// GetHTTPFile returns file paths for all .http file in directory path d with a recursive option.
+func GetHTTPFilePaths(d string, recure bool) []string {
+	fs, _ := getMatchingFiles(d, reHTTPFile, recure)
 	return fs
 }
 
-// Get matching entries in dir, and if recursive, all subdirs
-// Returns list of matches and the total count of files in tree
-func getMatchingFiles(dir string, r *regexp.Regexp, recursive bool) ([]string, int) {
+// GetHTTPFile returns file paths for all .http file in directory path d with a recursive option.
+func GetEnvFilePaths(d string, recure bool) []string {
+	fs, _ := getMatchingFiles(d, reEnvFile, recure)
+	return fs
+}
 
+// Get matching entries in dir, and if recursive, all subdirs.
+// Returns list of matches and the total count of files in tree.
+func getMatchingFiles(dir string, r *regexp.Regexp, recursive bool) ([]string, int) {
 	fis, err := os.ReadDir(dir)
 	if err != nil {
 		return []string{}, 0
