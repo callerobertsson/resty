@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/callerobertsson/resty/dothttp"
 	"github.com/callerobertsson/resty/utils"
 )
 
@@ -41,6 +42,8 @@ func (cli *CLI) commandLoop() error {
 			cli.handleLast()
 		case r == 'e':
 			cli.handleEdit()
+		case r == 'E':
+			cli.handleEditEnv()
 		case r == 'c':
 			cli.handleConfig()
 		case r == 'v':
@@ -94,6 +97,39 @@ func (cli *CLI) handleEdit() {
 
 		// Reload .http-file
 		err = cli.dotHTTP.LoadHTTPFile(cli.httpFile)
+		if err != nil {
+			stopMessage("Error loading %v: %v\n", cli.httpFile, err)
+			continue
+		}
+
+		cli.current = 0 // if something is deleted
+
+		break
+	}
+}
+
+func (cli *CLI) handleEditEnv() {
+	if cli.envFile == "" {
+		stopMessage("\nNo environment file to edit\n")
+		return
+	}
+
+	// Edit env-file (until no errors)
+	for {
+		utils.RenderClear()
+		_, err := utils.EditFile(cli.envFile, cli.config.Editor)
+		if err != nil {
+			stopMessage("Error editing %v: %v\n", cli.envFile, err)
+		}
+
+		cli.env, err = readEnvFile(cli.envFile)
+		if err != nil {
+			stopMessage("Error loading environment file %v: %v\n", cli.envFile, err)
+			continue
+		}
+
+		// New dotHTTP
+		cli.dotHTTP, err = dothttp.NewFromFile(cli.httpFile, cli.env)
 		if err != nil {
 			stopMessage("Error loading %v: %v\n", cli.httpFile, err)
 			continue
