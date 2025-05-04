@@ -30,7 +30,7 @@ func (cli *CLI) headerString() string {
 }
 
 func (cli *CLI) renderPrompt() {
-	fmt.Printf(utils.SUBTITLE + "\n[rRevcq?] > " + utils.NORM)
+	fmt.Printf(utils.SUBTITLE + "\n[rReEvcq?] > " + utils.NORM)
 }
 
 func (cli *CLI) renderUI() {

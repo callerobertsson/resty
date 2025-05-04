@@ -196,6 +196,7 @@ Commands
   R - Run all requests in current .http-file
   v - View variables set for current request
   e - Edit the input file using Editor config setting or $EDITOR environment variable
+  E - Edit the current environment file, if present.
   c - Show config settings
 
   ? - Show this help
