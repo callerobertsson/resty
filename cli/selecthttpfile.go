@@ -8,10 +8,9 @@ import (
 	"github.com/callerobertsson/resty/utils"
 )
 
-func (cli *CLI) selectLoop(d string) error {
-
+func (cli *CLI) selectHTTPFileLoop(d string) error {
 	for {
-		httpFiles := utils.GetHttpFilePaths(d, true)
+		httpFiles := utils.GetHTTPFilePaths(d, true)
 		if len(httpFiles) < 1 {
 			fmt.Printf("No .http-files found in %v\n", d)
 			os.Exit(1)
@@ -30,7 +29,7 @@ func (cli *CLI) selectLoop(d string) error {
 			return nil
 		}
 
-		if err := cli.StartFile(f); err != nil {
+		if err = cli.StartFile(f); err != nil {
 			fmt.Printf("Error: %v\n", err)
 			continue
 		}

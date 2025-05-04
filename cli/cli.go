@@ -8,7 +8,6 @@ import (
 type CLI struct {
 	config   *Config
 	httpFile string
-	rootDir  string
 	env      map[string]string
 	dotHTTP  *dothttp.DotHTTP
 	current  int
@@ -19,7 +18,6 @@ func New(c *Config, env map[string]string) *CLI {
 }
 
 func (cli *CLI) StartFile(f string) error {
-
 	cli.httpFile = f
 
 	maybeDH, err := dothttp.NewFromFile(cli.httpFile, cli.env)
@@ -38,12 +36,12 @@ func (cli *CLI) StartFile(f string) error {
 }
 
 func (cli *CLI) StartDirectory(d string) error {
-
 	utils.ColorOff()
 	if cli.config.ColorMode {
 		utils.ColorOn()
 	}
 
-	return cli.selectLoop(d)
+	// TODO: If no env-file maybe select one?
 
+	return cli.selectHTTPFileLoop(d)
 }

@@ -31,10 +31,9 @@ func (cli *CLI) runCurrentRequest() error {
 }
 
 func (cli *CLI) runRequest(r dothttp.Request) error {
-
 	args := r.BuildCurlArgs(cli.config.InsecureSSL)
 
-	fmt.Println(utils.TITLE + "=== CURL ======================================================================" + utils.NORM)
+	fmt.Println(utils.TITLE + "=== CURL ====================================================================" + utils.NORM)
 	fmt.Printf("%s %s\n", cli.config.CurlCommand, strings.Join(args, " "))
 
 	if r.Verb != "GET" && !confirmMessage("Are you sure?\n") {
@@ -43,7 +42,7 @@ func (cli *CLI) runRequest(r dothttp.Request) error {
 
 	fmt.Println(utils.SUBTITLE + "Calling API..." + utils.NORM)
 
-	bs, err := executeCommand(cli.config.CurlCommand, args...)
+	resp, err := executeCommand(cli.config.CurlCommand, args...)
 	if err != nil {
 		return err
 	}
@@ -51,21 +50,19 @@ func (cli *CLI) runRequest(r dothttp.Request) error {
 	// Get format command and mime type if possible
 	fmtCmd, mimeType := cli.getFormatterAndMimeType(r)
 
-	resp := string(bs)
 	var formatterErr error
 
 	if fmtCmd != "" {
-		maybeResp, err := cli.formatResponse(resp, fmtCmd)
-		if err != nil {
-			formatterErr = err
-		} else {
+		var maybeResp string
+		maybeResp, formatterErr = cli.formatResponse(resp, fmtCmd)
+		if formatterErr == nil {
 			resp = maybeResp
 		}
 	}
 
-	fmt.Println(utils.TITLE + "=== Response ==================================================================" + utils.NORM)
+	fmt.Println(utils.TITLE + "=== Response ================================================================" + utils.NORM)
 	fmt.Printf("%s\n", resp)
-	fmt.Println(utils.TITLE + "===============================================================================" + utils.NORM)
+	fmt.Println(utils.TITLE + "=============================================================================" + utils.NORM)
 
 	info := ", raw"
 	if fmtCmd != "" && mimeType != "" {
@@ -86,7 +83,7 @@ func (cli *CLI) runRequest(r dothttp.Request) error {
 		filePath, _ := reader.ReadString('\n')
 		utils.SetUnbufferedInput()
 
-		err := os.WriteFile(strings.TrimSpace(filePath), []byte(resp), 0666)
+		err = os.WriteFile(strings.TrimSpace(filePath), []byte(resp), 0666)
 		if err != nil {
 			fmt.Printf(utils.NOTICE+"Failed to write file: %v\n"+utils.NORM, err)
 			stopMessage("\n")
@@ -97,7 +94,7 @@ func (cli *CLI) runRequest(r dothttp.Request) error {
 }
 
 func (cli *CLI) getFormatterAndMimeType(r dothttp.Request) (string, string) {
-	mimeType, ok := r.Headers["accept"]
+	mimeType := r.Headers["accept"]
 
 	if mimeType == "" {
 		mimeType = "*"
@@ -112,7 +109,6 @@ func (cli *CLI) getFormatterAndMimeType(r dothttp.Request) (string, string) {
 }
 
 func (cli *CLI) formatResponse(s string, fmtCmd string) (string, error) {
-
 	fs, err := executeStdinCommand(s, fmtCmd)
 	if err != nil {
 		return "", err
@@ -130,7 +126,7 @@ func executeStdinCommand(data, command string, args ...string) (string, error) {
 
 	go func() {
 		defer stdin.Close()
-		io.WriteString(stdin, data)
+		_, _ = io.WriteString(stdin, data)
 	}()
 
 	out, err := cmd.Output()

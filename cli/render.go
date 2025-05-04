@@ -13,7 +13,6 @@ func (cli *CLI) renderHeader() {
 }
 
 func (cli *CLI) headerString() string {
-
 	conf := ", conf: none"
 	if cli.config.configFile != "" {
 		conf = " - " + cli.config.configFile

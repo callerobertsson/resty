@@ -98,7 +98,6 @@ func parseCommandLine() {
 }
 
 func readEnvFile(f string) (map[string]string, error) {
-
 	file, err := os.Open(f)
 	if err != nil {
 		return map[string]string{}, err

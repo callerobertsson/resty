@@ -1,0 +1,63 @@
+### TEST HTTP
+#
+
+@place=Marks%20Kommun
+
+### @name Weather WTTR
+GET wttr.in/{{place}}
+
+### @name Rain WTTR
+GET v2.wttr.in/Marks%20Kommun
+
+### @name Sunet Web Page
+GET https://sunet.se
+
+
+# Define Pokemon variables
+@base_poke=https://pokeapi.co/api/v2/pokemon
+@pokemon=pikachu
+@pokemon2=bulbasaur
+
+### Accept application/json
+GET {{base_poke}}/{{pokemon}} HTTP/1.1
+Accept: application/json
+
+### Get Pokemon (accept not set)
+GET {{base_poke}}/{{pokemon}} HTTP/1.1
+
+### @name Get another Pokemon (application/json)
+GET {{base_poke}}/{{pokemon2}} HTTP/1.1
+Accept: application/json
+
+
+# Define GoRest variables
+@gorest_url=https://gorest.co.in/public/v2
+
+### Get Users from GoRest
+GET {{gorest_url}}
+
+### Create user on GoRest (need token)
+POST {{gorest_url}}/users
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer ACCESS-TOKEN
+
+{
+    "name":"Tenali Ramakrishna",
+    "gender":"male",
+    "email":"tenali.ramakrishna@15ce.com",
+    "status":"active"
+}
+
+
+### Dummy POST Test
+POST http://localhost:12345/echobody
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer ACCESS-TOKEN
+
+{
+    "name":"Inghe Brahe",
+    "korv":"spad"
+}
+
