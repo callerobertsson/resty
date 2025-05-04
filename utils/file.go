@@ -8,6 +8,7 @@ import (
 )
 
 var reHTTPFile = regexp.MustCompile(`\.http$`)
+var reEnvFile = regexp.MustCompile(`\.env$`)
 
 // FileExists checks if file path f exists.
 func FileExists(f string) bool {
@@ -18,6 +19,12 @@ func FileExists(f string) bool {
 // GetHTTPFile returns file paths for all .http file in directory path d with a recursive option.
 func GetHTTPFilePaths(d string, recure bool) []string {
 	fs, _ := getMatchingFiles(d, reHTTPFile, recure)
+	return fs
+}
+
+// GetHTTPFile returns file paths for all .http file in directory path d with a recursive option.
+func GetEnvFilePaths(d string, recure bool) []string {
+	fs, _ := getMatchingFiles(d, reEnvFile, recure)
 	return fs
 }
 

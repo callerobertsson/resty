@@ -17,7 +17,8 @@ const DefaultConfigFileName = ".resty.json"
 
 // Config holds the settings.
 type Config struct {
-	configFile  string            // Config file path, set by application
+	configFile string // Config file path, set by application
+	// envFile     string            // Environment file path, set by application
 	CurlCommand string            // Default "curl"
 	Formatters  map[string]string // Mime type: Formatter command
 	Editor      string            // Default $EDITOR
@@ -73,10 +74,10 @@ func ConfigJSON(c Config) string {
 	return fmt.Sprintf("%v\n", string(bs))
 }
 
-// GetConfigOrDefault returns a Config constructed from the JSON file. If f is
+// getConfigOrDefault returns a Config constructed from the JSON file. If f is
 // the empty string it tries to read the default config file. If that fails an
 // empty Config, with default values, are returned.
-func GetConfigOrDefault(f string) (*Config, error) {
+func getConfigOrDefault(f string) (*Config, error) {
 	// Default config
 	config := Config{
 		CurlCommand: "curl",

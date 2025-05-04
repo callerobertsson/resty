@@ -29,7 +29,7 @@ func (cli *CLI) selectHTTPFileLoop(d string) error {
 			return nil
 		}
 
-		if err = cli.StartFile(f); err != nil {
+		if err = cli.startFile(f); err != nil {
 			fmt.Printf("Error: %v\n", err)
 			continue
 		}

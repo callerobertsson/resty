@@ -1,3 +1,4 @@
+// Package utils fuzzy file picker.
 package utils
 
 import (

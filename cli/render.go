@@ -13,12 +13,20 @@ func (cli *CLI) renderHeader() {
 }
 
 func (cli *CLI) headerString() string {
-	conf := ", conf: none"
+	http := "no http"
+	if cli.httpFile != "" {
+		http = cli.httpFile
+	}
+	env := "no env"
+	if cli.envFile != "" {
+		env = cli.envFile
+	}
+	conf := "no conf"
 	if cli.config.configFile != "" {
-		conf = " - " + cli.config.configFile
+		conf = cli.config.configFile
 	}
 
-	return fmt.Sprintf(utils.TITLE+"RESTY "+utils.SUBTITLE+"%s%s\n\n"+utils.NORM, cli.httpFile, conf)
+	return fmt.Sprintf(utils.TITLE+"RESTY "+utils.SUBTITLE+"%s - %s - %s\n\n"+utils.NORM, http, env, conf)
 }
 
 func (cli *CLI) renderPrompt() {
