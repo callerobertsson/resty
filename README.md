@@ -5,7 +5,6 @@ _A command line interface on Linux and Windows for running and managing requests
 
 ![Screenshot](cli.png)
 
-
 ## How it works
 
 Run `resty` with a .http-file as argument.
