@@ -95,7 +95,7 @@ Example config file:
   "ColorMode": true,
   "InsecureSSL": true,
   "Formatters": {
-      "*": "cat"
+      "*": "cat",
       "application/json": "jq"
   }
 }
