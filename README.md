@@ -3,6 +3,8 @@
 _A command line interface on Linux and Windows for running and managing requests in a
 .http-file._
 
+NOTE: Moved to https://codeberg.org/robcon/resty
+
 ![Screenshot](cli.png)
 
 
